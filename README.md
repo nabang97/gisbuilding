@@ -1,0 +1,23 @@
+# gisbuilding
+
+Additional Library:
+- AHPreferenceActivity (V 1.04)
+- Animation (V 1.02)
+- AnimationPlus (V 2.30)
+- B4XEncyption (V 1.00)
+- ByteConverter (V 1.10)
+- Core (V 8.00)
+- Dialogs (V 4.0.1)
+- Encryption (V 1.10)
+- GPS (V 1.20)
+- JavaObject (V 2.05)
+- JSON (V 1.10)
+- KeyValueStore2 (V 2.20)
+- OkHttp (V 1.20)
+- okHttpUtils (V 2.61)
+- RandomAccessFile (V 2.32)
+- Reflection (V 2.40)
+- RuntimePermissions (V 1.10)
+- StringUtils (V 1.12)
+- xCustomListView (V 1.53)
+- XUI (V 1.55)
