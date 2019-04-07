@@ -12,6 +12,7 @@ Version=8.3
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
+	Dim HomeBuilding As String
 End Sub
 
 Sub Globals
@@ -73,27 +74,32 @@ End Sub
 
 Sub OfficeHome_Click()
 	OfficeHome.SetBackgroundImage(LoadBitmap(File.DirAssets,"office-pres.png"))
+	HomeBuilding = "Office"
 	StartActivity(OfficeBuilding)
 	SetAnimation("zoom_enter", "zoom_exit")
 End Sub
 
 Sub WorshipHome_Click
+	HomeBuilding = "Worship"
 	StartActivity(WorshipBuilding)
 	SetAnimation("zoom_enter", "zoom_exit")
 End Sub
 
 Sub HealthHome_Click
+	HomeBuilding = "Health"
 	StartActivity(HealthBuilding)
 	SetAnimation("zoom_enter", "zoom_exit")
 End Sub
 
 
 Sub EducationalHome_Click
+	HomeBuilding = "Educational"
 	StartActivity(EducationalBuilding)
 	SetAnimation("zoom_enter", "zoom_exit")
 End Sub
 
 Sub MsmeHome_Click
+	HomeBuilding = "Msme"
 	StartActivity(MsmeBuilding)
 	SetAnimation("zoom_enter", "zoom_exit")
 End Sub

@@ -49,6 +49,8 @@ Sub Globals
 	Private PanelMap As Panel
 	Private btnRoute As Button
 	Private WebViewRoute As WebView
+	Private editBtn As Button
+	Private editFacility As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -56,7 +58,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("MainScrollView")
 	ScrollView1.Panel.LoadLayout("MsmeDetail")
 	PanelToolBar.Visible = False
-	LblEdit.Visible = True
 	'Set Back arrow
 	BackArrow.Visible= True
 	BackArrow.SetBackgroundImage(LoadBitmap(File.DirAssets,"back-arrow.png"))
@@ -202,4 +203,12 @@ Sub TabHost1_TabChanged
 			Msgbox("Current tab is " & TabHost1.CurrentTab, "")
 	End Select
 
+End Sub
+
+Sub editBtn_Click
+	StartActivity(MsmeEdit)
+End Sub
+
+Sub editFacility_Click
+	StartActivity(EditBuildingFacility)
 End Sub

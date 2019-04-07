@@ -37,6 +37,7 @@ Sub Globals
 	Private BtnSearch As Button
 	Private BtnInfo As Button
 	Private PanelToolBar As Panel
+	Private btnDelete As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -165,3 +166,4 @@ End Sub
 Sub BtnInfo_Click
 	
 End Sub
+

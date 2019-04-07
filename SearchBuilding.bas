@@ -19,7 +19,7 @@ Sub Process_Globals
 	idBuilding=""
 	nameBuilding=""
 	Dim tipp,tipname,typeoffice,cons,consname,typecons  As String
-	
+	Dim idspin As String
 End Sub
 
 Sub Globals
@@ -50,7 +50,6 @@ Sub Globals
 	Dim spinnerMapB As Map
 	Dim spinnerMapJ As Map
 	Dim spinnerMapT As Map
-	Dim idspin As String
 	Dim typesrc As String
 	Dim jorongid As String
 	Dim typeid As String
@@ -65,8 +64,8 @@ Sub Globals
 	Dim count As Int
 	Private FromText As EditText
 	Private ToText As EditText
-	
 	Dim radiusku As Int
+	Private Label3 As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -80,7 +79,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	BackArrow.Visible= False
 	TitleBar.Text="Search Building"
 	TitleBar.Left = 5%x
-	
+	Home.HomeBuilding = "null"
 	'menambahkan WebView Map
 	WebViewTest.Initialize("")
 	Activity.AddView(WebViewTest,0,6%y,100%x,35%y)
@@ -141,6 +140,14 @@ End Sub
 Sub CreateSpinType_Item
 	spinnerMapT.Initialize
 	Select typesrc
+		Case "model"
+			SpinType.add("Select Building Model ")
+			SpinType.add("Rumah Gadang")
+			spinnerMapT.Put("Rumah Gadang","rg")
+			SpinType.add("Dutch Building")
+			spinnerMapT.Put("Dutch Building","db")
+			SpinType.add("Other")
+			spinnerMapT.Put("Other","ot")
 		Case "type"
 			Select idspin
 				Case "Worship"	
@@ -157,7 +164,7 @@ Sub CreateSpinType_Item
 					ExecuteRemoteQuery("SELECT level_id, name_of_level FROM level_of_education ORDER BY name_of_level ASC","ShowType")
 				Case "Health"
 					SpinType.add("Select Type "&idspin)
-					ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_health_services ORDER BY name_of_type ASC","ShowType")
+					ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_health_building ORDER BY name_of_type ASC","ShowType")
 			End Select
 		Case "jorong"
 			Select idspin
@@ -204,23 +211,6 @@ Sub CreateSpinType_Item
 					SpinType.add("Select Educational Level")
 					ExecuteRemoteQuery("SELECT education_id, educational_level FROM education ORDER by educational_level ASC","ShowEducation")
 			End Select
-'		Case "facility"
-'			Select idspin
-'				Case "Worship"
-'					ExecuteRemoteQuery("SELECT * FROM worship_building_facilities ORDER BY name_of_facility ASC","ShowFacility")
-'				Case "Office"
-'					SpinType.Add("Select Facility")
-'					ExecuteRemoteQuery("SELECT * FROM office_building_facilities ORDER BY name_of_facility ASC","ShowFacility")
-'				Case "Health"
-'					SpinType.Add("Select Facility")
-'					ExecuteRemoteQuery("SELECT * FROM health_building_facilities ORDER BY name_of_facility ASC","ShowFacility")
-'				Case "Educational"
-'					SpinType.Add("Select Facility")
-'					ExecuteRemoteQuery("SELECT * FROM educational_building_facilities ORDER BY name_of_facility ASC","ShowFacility")
-'				Case "Msme"
-'					SpinType.Add("Select Facility")
-'					ExecuteRemoteQuery("SELECT * FROM msme_building_facilities ORDER BY name_of_facility ASC","ShowFacility")
-'			End Select
 	End Select
 End Sub
 
@@ -709,6 +699,11 @@ Sub SearchBtn_Click
 	End Select
 	Log(SearchText.Text)
 	Select idspin
+		Case "All"
+			Select typesrc
+				Case "model"
+				Msgbox("Query belum ada :(","WARNING!")
+			End Select
 		Case "Worship"
 			Select typesrc
 				Case "name"
@@ -752,7 +747,7 @@ Sub SearchBtn_Click
 				Case "building area"
 					ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM worship_building WHERE building_area BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_worship_building",idspin)
 				Case "radius"
-					ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"&" "&"-0.934536163933345"&")',-1), geom) as jarak	FROM worship_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"&" "&"-0.934536163933345"&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak	FROM worship_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
 				Case "standing year"
 					ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM worship_building WHERE standing_year BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_worship_building",idspin)
 			End Select
@@ -791,7 +786,11 @@ Sub SearchBtn_Click
 				Case "facility"	
 						ExecuteRemoteQuery("SELECT O.office_building_id, O.name_of_office_building, ST_X(ST_Centroid(O.geom)) AS lng, ST_Y(ST_CENTROID(O.geom)) AS lat FROM office_building As O JOIN detail_office_building_facilities As F on O.office_building_id=F.office_building_id WHERE F.facility_id IN ("&idCheckSub&") GROUP BY F.office_building_id, O.office_building_id, O.name_of_office_building HAVING COUNT(*) = "&count&"",idspin)	
 				Case "radius"
-					ExecuteRemoteQuery("SELECT office_building_id, name_of_office_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"&" "&"-0.934536163933345"& ")',-1), geom) as jarak FROM office_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"&" "&"-0.934536163933345"&")',-1),	geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					If Main.kvs.ContainsKey("Lat") == False And Main.kvs.ContainsKey("Long") == False Then
+						Msgbox("Your location haven't been set","Error Message")
+					Else
+					ExecuteRemoteQuery("SELECT office_building_id, name_of_office_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak FROM office_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1),	geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					End If
 			End Select
 			
 		Case "Health"
@@ -813,7 +812,7 @@ Sub SearchBtn_Click
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM health_building WHERE type_of_health_services = '"&typeid&"' order by name_of_health_building",idspin)
+						ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM health_building WHERE type_of_health_building = '"&typeid&"' order by name_of_health_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 					End If
 				Case "jorong"
@@ -833,7 +832,11 @@ Sub SearchBtn_Click
 				Case "facility"
 						ExecuteRemoteQuery("SELECT H.health_building_id, H.name_of_health_building, ST_X(ST_Centroid(H.geom)) AS lng, ST_Y(ST_CENTROID(H.geom)) AS lat FROM health_building As H JOIN detail_health_building_facilities As F on H.health_building_id=F.health_building_id WHERE F.facility_id IN ("&idCheckSub&") GROUP BY F.health_building_id, H.health_building_id, H.name_of_health_building HAVING COUNT(*) = "&count&"",idspin)
 				Case "radius"
-					ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat,	ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"&" "&"-0.934536163933345"&")',-1), geom) as jarak FROM health_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"& " "&"-0.934536163933345"&")',-1),	geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					If Main.kvs.ContainsKey("Lat") == False And Main.kvs.ContainsKey("Long") == False Then
+						Msgbox("Your location haven't been set","Error Message")
+					Else
+					ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat,	ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak FROM health_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1),	geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					End If
 			End Select
 			
 		Case "Educational"
@@ -879,7 +882,11 @@ Sub SearchBtn_Click
 				Case "building area"
 					ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM educational_building WHERE building_area BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_educational_building",idspin)
 				Case "radius"
-					ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"&" "&"-0.934536163933345"&")',-1), geom) as jarak	FROM educational_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"&" "&"-0.934536163933345"&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					If Main.kvs.ContainsKey("Lat") == False And Main.kvs.ContainsKey("Long") == False Then
+						Msgbox("Your location haven't been set","Error Message")
+					Else
+					ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak	FROM educational_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					End If
 			End Select
 			
 		Case "Msme"
@@ -921,7 +928,11 @@ Sub SearchBtn_Click
 				Case "facility"
 						ExecuteRemoteQuery("Select M.msme_building_id, M.name_of_msme_building, ST_X(ST_Centroid(M.geom)) As lng, ST_Y(ST_CENTROID(M.geom)) As lat FROM msme_building As M JOIN detail_msme_building_facilities As F on M.msme_building_id=F.msme_building_id WHERE F.facility_id IN ("&idCheckSub&") GROUP BY F.msme_building_id, M.msme_building_id, M.name_of_msme_building HAVING COUNT(*) = "&count&"",idspin)
 				Case "radius"
-					ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat,	ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"&" "&"-0.934536163933345"&")',-1), geom) as jarak FROM msme_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&"100.43371675305"&" "&"-0.934536163933345"&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					If Main.kvs.ContainsKey("Lat") == False And Main.kvs.ContainsKey("Long") == False Then
+						Msgbox("Your location haven't been set","Error Message")
+					Else
+					ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat,	ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak FROM msme_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					End If
 			End Select
 			
 		Case "House"
@@ -1128,6 +1139,7 @@ Sub SpinSearch_ItemClick (Position As Int, Value As Object)
 	SpinJorong.SelectedIndex = 0
 	Select typesrc
 		Case "null"
+			Label3.Visible=False
 			FromText.Visible=False
 			ToText.Visible=False
 			FacilityBtn.Visible=False
@@ -1142,6 +1154,7 @@ Sub SpinSearch_ItemClick (Position As Int, Value As Object)
 			SpinType.Clear
 			
 		Case "radius"
+			Label3.Visible=True
 			FromText.Visible=False
 			ToText.Visible=False
 			FacilityBtn.Visible=False
@@ -1165,8 +1178,10 @@ Sub SpinSearch_ItemClick (Position As Int, Value As Object)
 			SearchText.Visible = False
 			SearchRadius.Visible = False
 			SpinJorong.Visible = False
+			Label3.Visible=False
 			
 		Case "facility"
+			Label3.Visible=False
 			FromText.Visible=False
 			ToText.Visible=False
 			FacilityBtn.Visible=True
@@ -1179,6 +1194,7 @@ Sub SpinSearch_ItemClick (Position As Int, Value As Object)
 			SpinType.Clear
 			
 		Case "land area", "building area", "standing year", "income", "electric capacity"
+			Label3.Visible=False
 			FromText.Visible=True
 			ToText.Visible=True
 			FromText.Text=""
@@ -1193,6 +1209,7 @@ Sub SpinSearch_ItemClick (Position As Int, Value As Object)
 			SpinType.Clear
 				
 		Case Else
+			Label3.Visible=False
 			FromText.Visible=False
 			ToText.Visible=False
 			FacilityBtn.Visible=False
@@ -1236,6 +1253,8 @@ End Sub
 Sub SearchRadius_ValueChanged (Value As Int, UserChanged As Boolean)
 	If UserChanged Then
 		radiusku = Value
+		Label3.Text = Value
 	End If
+	Label3.Text = Value&" m"
 	Log(radiusku)
 End Sub

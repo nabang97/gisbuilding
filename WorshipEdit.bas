@@ -39,11 +39,9 @@ Sub Globals
 	Private PanelToolBar As Panel
 	
 	Private numfc As B4XView
-	Private namefc As Spinner
-	Private btnGallery As Panel
+	Private namefc As Label
 	Private PFacility As Panel
 	Private ListItem As Panel
-	Private PanelButton As Panel
 	
 	Dim WorshipName As Label
 	Private TypeOfWorship As Spinner
@@ -56,10 +54,8 @@ Sub Globals
 	Private Construction As Spinner
 	Dim ConsMap As Map
 	Dim FacMap As Map
-	Dim ArraySize As Int
-	Dim fasilitasall_array As List
-	Dim f As Map
 	
+	Private BtnSaveChanges As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -69,7 +65,12 @@ Sub Activity_Create(FirstTime As Boolean)
 	ScrollView1.Panel.LoadLayout("WorshipEdit")
 	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolBar.Visible = False
-	
+	SetBackgroundTintList(WorshipName, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(StandingYear, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(BuildingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(LandArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(Electricity, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(ParkingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
 	'Set Back arrow
 	BackArrow.Visible= True
 	BackArrow.SetBackgroundImage(LoadBitmap(File.DirAssets,"back-arrow.png"))
@@ -80,11 +81,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		WorshipName.Text = WorshipBuilding.nameBuilding
 		ids = WorshipBuilding.idBuilding
 		Log(ids)
-	Else
-		WorshipName.Text = "Please press on the button and choose an item."
-	End If
-	
-	If SearchBuilding.nameBuilding.Length > 0 Then
+	Else If SearchBuilding.nameBuilding.Length > 0 Then
 		WorshipName.Text = SearchBuilding.nameBuilding
 		ids = SearchBuilding.idBuilding
 		Log(ids)
@@ -92,15 +89,9 @@ Sub Activity_Create(FirstTime As Boolean)
 		WorshipName.Text = "Please press on the button and choose an item."
 	End If
 	
-	
-	PFacility.Height=CLV1.AsView.Height + 30dip
 	Dim sv As ScrollView
-	CLV1.sv.Height= CLV1.AsView.Height + 2%y
-	PanelBuildingList.Height = PanelBuildingList.Height + PFacility.Height
-	ScrollView1.Panel.Height = PanelBuildingList.Height - 16%y
-	PanelButton.Top= PanelBuildingList.Height - 30%y
-	ToastMessageShow($"${CLV1.sv.ScrollViewInnerPanel.Height}"$,True)
-
+	ScrollView1.Height=100%y
+	ScrollView1.Panel.Height = PanelBuildingList.Height
 End Sub
 
 Sub Activity_Resume
@@ -120,37 +111,32 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-Private Sub CreateItem(Width As Int, Title As String, Content As String) As Panel
-	Dim p As B4XView = xui.CreatePanel("")
-	p.LoadLayout("facility_edit")
-	p.SetLayoutAnimated(0, 0, 0, Width,5%y)
-	numfc.Text = Title
-	Dim arraynow As Int 
-	arraynow = fasilitasall_array.Size
-	For c=0 To arraynow-1
-		Dim f As Map
-		f = fasilitasall_array.Get(c)
-		'Set CustomListView for Facility
-		Dim Contentt As String
-		Dim Contentid As String
-		Contentid = f.Get("facility_id")
-		Contentt = f.Get("nameface")
-		namefc.Add(Contentt)
-		FacMap.Put(Contentt,Contentid)
-		Dim tesajah As String
-		tesajah = arraynow - 1
-		Log("Array now :"&tesajah)
-		Log("fasilitas :"&Contentt&" ID:"&Contentid&"")
-		
-	Next
-	namefc.SelectedIndex = namefc.IndexOf(Content)
-	Return p
+Sub SetBackgroundTintList(View As View,Active As Int, Enabled As Int)
+	Dim States(2,1) As Int
+	States(0,0) = 16842908     'Active
+	States(1,0) = 16842910    'Enabled
+	Dim Color(2) As Int = Array As Int(Active,Enabled)
+	Dim CSL As JavaObject
+	CSL.InitializeNewInstance("android.content.res.ColorStateList",Array As Object(States,Color))
+	Dim jo As JavaObject
+	jo.InitializeStatic("android.support.v4.view.ViewCompat")
+	jo.RunMethod("setBackgroundTintList", Array(View, CSL))
 End Sub
 
 Sub ExecuteRemoteQuery(Query As String, JobName As String)
 	Dim Job As HttpJob
 	Job.Initialize(JobName, Me)
 	Job.PostString(""&Main.Server&"mobile/json.php", Query)
+End Sub
+
+
+Private Sub CreateItem(Width As Int, Title As String, Content As String) As Panel
+	Dim p As B4XView = xui.CreatePanel("")
+	p.LoadLayout("facility_edit")
+	p.SetLayoutAnimated(0, 0, 0, Width,5%y)
+	numfc.Text = Title
+	namefc.Text = Content
+	Return p
 End Sub
 
 Sub JobDone(Job As HttpJob)
@@ -160,18 +146,13 @@ Sub JobDone(Job As HttpJob)
 		Log("Response from server :"& res)
 		
 		Select Job.JobName
-			Case "AllFacilities"
-				
+			Case "AllFacilities"	
 				Dim parserf As JSONParser 'mengambil data dalam bentuk json menjadi array
 				Dim parserfa As JSONParser
 				parserf.Initialize(res)
 				Dim fasi_array As List = parserf.NextArray
 				parserfa.Initialize(res)
-				fasilitasall_array.Initialize
-				fasilitasall_array = parserfa.NextArray
 				Dim c As Int
-				f = fasilitasall_array.Get(c)
-				Log("Array Size: "&ArraySize)
 				For c=0 To fasi_array.Size - 1
 					Dim a As Map
 					a = fasi_array.Get(c)
@@ -179,9 +160,6 @@ Sub JobDone(Job As HttpJob)
 					isi = a.Get("name_of_facility")
 					Log("ISI: "&isi)
 				Next
-				Log("Temp Array: "&ArraySize)
-				ArraySize = fasilitasall_array.Size
-				ArraySize2 = ArraySize
 				ProgressDialogHide
 				
 			Case "FASILITAS"
@@ -200,7 +178,7 @@ Sub JobDone(Job As HttpJob)
 					
 				Next
 				
-				Log("Temp Array 2: "&fasilitasall_array.Size)
+				'Log("Temp Array 2: "&fasilitasall_array.Size)
 				ProgressDialogHide
 				
 			Case "DATA"
@@ -282,7 +260,21 @@ Sub JobDone(Job As HttpJob)
 	Job.Release
 End Sub
 
-Sub btnGallery_Click
+Sub TypeOfWorship_ItemClick (Position As Int, Value As Object)
+	Dim id As String
+	id = WorshipMap.Get(Value)
+	typeworship = id
+	Log(typeworship)
+End Sub
+
+Sub Construction_ItemClick (Position As Int, Value As Object)
+	Dim idc As String
+	idc = ConsMap.Get(Value)
+	typecons = idc
+	Log(typecons)
+End Sub
+
+Sub BtnSaveChanges_Click
 	Log(ids)
 	If typeworship == "" Then
 		tipe_i = tipp
@@ -311,19 +303,4 @@ Sub btnGallery_Click
 	End If
 	ProgressDialogShow("loading...")
 	ExecuteRemoteQuery("UPDATE worship_building SET name_of_worship_building = '"&nama&"', type_of_worship ="&tipe_i&", building_area = "& lbangunan_i&", land_area = '"&ltanah_i&"', parking_area = "&lparkir_i&",standing_year = '"&tahun_i&"', electricity_capacity = "& listrik_i &", type_of_construction = "& cons_i &"WHERE worship_building_id = '"&ids&"'","Update")
-	
-End Sub
-
-Sub TypeOfWorship_ItemClick (Position As Int, Value As Object)
-	Dim id As String
-	id = WorshipMap.Get(Value)
-	typeworship = id
-	Log(typeworship)
-End Sub
-
-Sub Construction_ItemClick (Position As Int, Value As Object)
-	Dim idc As String
-	idc = ConsMap.Get(Value)
-	typecons = idc
-	Log(typecons)
 End Sub

@@ -50,6 +50,9 @@ Sub Globals
 	Private PanelMap As Panel
 	Private btnRoute As Button
 	Private WebViewRoute As WebView
+	Private editBtn As Button
+	Private Label2 As Label
+	Private editFacility As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -58,8 +61,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	ScrollView1.Panel.LoadLayout("WorshipDetail")
 	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolBar.Visible = False
-	LblEdit.Visible = True
-	
 	
 	TabHost1.AddTab("Map","tabMap")
 	TabHost1.AddTab("Detail","Worship_tabDetail")
@@ -75,10 +76,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	If  WorshipBuilding.nameBuilding.Length > 0 Then
 		WorshipName.Text = WorshipBuilding.nameBuilding
 		ids = WorshipBuilding.idBuilding
-		Log("ID & nama building" & ids &" , "&WorshipBuilding.nameBuilding)
-	End If
-	
-	If SearchBuilding.nameBuilding.Length > 0 Then
+	Else If SearchBuilding.nameBuilding.Length > 0 Then
 		WorshipName.Text = SearchBuilding.nameBuilding
 		ids = SearchBuilding.idBuilding
 		Log(SearchBuilding.nameBuilding)
@@ -184,7 +182,7 @@ End Sub
 
 
 Sub LblEdit_Click
-	StartActivity(WorshipEdit)
+	
 End Sub
 
 
@@ -206,4 +204,12 @@ Sub TabHost1_TabChanged
 			Msgbox("Current tab is " & TabHost1.CurrentTab, "")
 	End Select
 
+End Sub
+
+Sub editBtn_Click
+	StartActivity(WorshipEdit)
+End Sub
+
+Sub editFacility_Click
+	StartActivity(EditBuildingFacility)
 End Sub

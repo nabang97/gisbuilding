@@ -22,16 +22,10 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
-	Private CLV1 As CustomListView
 	Private ScrollView1 As ScrollView
 	Private TitleBar As Label
 	Private BackArrow As Label
 	Private PanelBuildingList As Panel
-	Private numfc As B4XView
-	Private namefc As B4XView
-	Private PFacility As Panel
-	Private ListItem As Panel
-	Private PanelButton As Panel
 	Private LblEdit As Label
 	
 	Private StandingYear As Label
@@ -47,7 +41,6 @@ Sub Globals
 	Private NumTeacher As Label
 	Private NumStudent As Label
 	Private PanelToolbar As Panel
-	Private LblFacility As Label
 	'Set id
 	Dim ids As String
 	
@@ -55,6 +48,7 @@ Sub Globals
 	Dim ConsMap As Map
 	Dim LevelMap As Map
 	
+	Private BtnSaveChanges As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -63,7 +57,16 @@ Sub Activity_Create(FirstTime As Boolean)
 	ScrollView1.Panel.LoadLayout("EducationalEdit")
 	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolbar.Visible = False
-	LblEdit.Visible = True
+	
+	SetBackgroundTintList(EducationName, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(Headmaster, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(NumTeacher, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(NumStudent, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(StandingYear, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(BuildingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(LandArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(Electricity, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(ParkingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
 	
 	'Set Back arrow
 	BackArrow.Visible= True
@@ -75,26 +78,28 @@ Sub Activity_Create(FirstTime As Boolean)
 		EducationName.Text = EducationalBuilding.nameBuilding
 		ids =EducationalBuilding.idBuilding
 		Log(ids)
-	Else
-		EducationName.Text = "Please press on the button and choose an item."
-	End If
-	
-	If SearchBuilding.nameBuilding.Length > 0 Then
+	Else If SearchBuilding.nameBuilding.Length > 0 Then
 		EducationName.Text = SearchBuilding.nameBuilding
 		ids =SearchBuilding.idBuilding
 		Log(ids)
 	Else
 		EducationName.Text = "Please press on the button and choose an item."
 	End If
-
 	
-End Sub
-
-Sub Activity_Resume
-	CLV1.Clear
 	EduMap.Initialize
 	ConsMap.Initialize
 	LevelMap.Initialize
+	
+	Dim sv As ScrollView
+	ScrollView1.Height=100%y	
+	PanelBuildingList.Height=BtnSaveChanges.Top+BtnSaveChanges.Height+10%y
+	ScrollView1.Panel.Height = PanelBuildingList.Height
+End Sub
+
+Sub Activity_Resume
+	EduMap.Clear
+	ConsMap.Clear
+	LevelMap.Clear
 	CreateSchoolLevel
 	ProgressDialogShow("Loading...")
 	ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id ='"&ids&"'","FASILITAS")
@@ -107,13 +112,16 @@ Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-Private Sub CreateItem(Width As Int, Title As String, Content As String) As Panel
-	Dim p As B4XView = xui.CreatePanel("")
-	p.LoadLayout("facility_list")
-	p.SetLayoutAnimated(0, 0, 0, Width, 5%y)
-	numfc.Text = Title
-	namefc.Text = Content
-	Return p
+Sub SetBackgroundTintList(View As View,Active As Int, Enabled As Int)
+	Dim States(2,1) As Int
+	States(0,0) = 16842908     'Active
+	States(1,0) = 16842910    'Enabled
+	Dim Color(2) As Int = Array As Int(Active,Enabled)
+	Dim CSL As JavaObject
+	CSL.InitializeNewInstance("android.content.res.ColorStateList",Array As Object(States,Color))
+	Dim jo As JavaObject
+	jo.InitializeStatic("android.support.v4.view.ViewCompat")
+	jo.RunMethod("setBackgroundTintList", Array(View, CSL))
 End Sub
 
 Sub CreateSchoolLevel
@@ -136,33 +144,7 @@ Sub JobDone(Job As HttpJob)
 		Log("Response:"& res)
 		Dim parser As JSONParser 'mengambil data dalam bentuk json menjadi array
 		parser.Initialize(res)
-		Select Job.JobName
-			Case "FASILITAS"
-				Dim fasilitas_array As List
-				fasilitas_array = parser.NextArray
-				For i=0 To fasilitas_array.Size - 1
-					Dim a As Map
-					a = fasilitas_array.Get(i)
-					'Set CustomListView for Facility
-					Dim content As String = a.Get("name_of_facility")
-					Dim quantity As Int = a.Get("quantity_of_facilities")
-					CLV1.Add(CreateItem(CLV1.AsView.Width, $"${quantity}"$, content), "")
-					CLV1.AsView.Height = ListItem.Height*(i+1)
-				Next
-				Dim sv As ScrollView
-				CLV1.sv.Height = CLV1.AsView.Height
-				PFacility.Height = CLV1.AsView.Height + LblFacility.Height
-				PanelButton.Top = PFacility.Top + PFacility.Height + 5%y
-				PanelBuildingList.Height = PanelButton.Top + PanelButton.Height +5%y
-				If PanelBuildingList.Height <= 93%y Then
-					PanelBuildingList.Height = 93%y
-					ScrollView1.Panel.Height = PanelBuildingList.Height
-				Else
-					ScrollView1.Panel.Height = PanelBuildingList.Height
-				End If
-				Log(content)
-				ProgressDialogHide
-				
+		Select Job.JobName			
 			Case "DATA"
 				Dim data_array As List
 				data_array = parser.NextArray
@@ -212,7 +194,11 @@ Sub JobDone(Job As HttpJob)
 						LandArea.Text = "0"
 					End If
 				Next
+				schoollevel.SelectedIndex = schoollevel.IndexOf(levelname)				
 				TypeOfEducation.SelectedIndex = TypeOfEducation.IndexOf(typeschoolname)
+				Construction.SelectedIndex = Construction.IndexOf(consname)
+				Log("TYpe: "&TypeOfEducation.SelectedIndex&" Level: "&schoollevel.SelectedIndex& " COns :" &Construction.SelectedIndex)
+				ProgressDialogHide
 				
 			Case "TypeEducation"
 				Dim type_array As List
@@ -220,15 +206,13 @@ Sub JobDone(Job As HttpJob)
 				For i=0 To type_array.Size -1
 					Dim a As Map
 					a = type_array.Get(i)
-					Dim namatype, idtype As String
+					Dim namatype, id_type As String
 					namatype= a.Get("name_of_level")
-					idtype = a.Get("level_id")
-					
+					id_type = a.Get("level_id")					
 					schoollevel.Add(namatype)
-					LevelMap.Put(namatype,idtype)
-					Log("ID Map: "&namatype&" "&idtype)
+					LevelMap.Put(namatype,id_type)
+					Log("ID Map: "&namatype&" "&id_type)
 				Next
-				schoollevel.SelectedIndex = schoollevel.IndexOf(levelname)
 				
 			Case "Construction"
 				Dim cons_array As List
@@ -238,14 +222,12 @@ Sub JobDone(Job As HttpJob)
 					a = cons_array.Get(j)
 					Dim nama_type, id_type As String
 					nama_type= a.Get("name_of_type")
-					id_type = a.Get("type_id")
-					
+					id_type  = a.Get("type_id")
 					Construction.Add(nama_type)
-					ConsMap.Put(nama_type,id_type)
-					Log("ID Map: "&nama_type&" "&id_type)
+					ConsMap.Put(nama_type, id_type )
+					Log("ID Map: "&nama_type&" "& id_type )
 				Next
-				Construction.SelectedIndex = Construction.IndexOf(consname)
-			
+				
 			Case "Update"
 				ProgressDialogHide
 				Try
@@ -286,8 +268,12 @@ Sub Construction_ItemClick (Position As Int, Value As Object)
 End Sub
 
 Sub btnGallery_Click
+	
+End Sub
+
+Sub BtnSaveChanges_Click
 	Log(ids)
-	If typeschool == "" Then
+	If idtype == "" Then
 		tipe_i = typeschool
 	Else
 		tipe_i = idtype
@@ -301,16 +287,16 @@ Sub btnGallery_Click
 	teacher_i = NumTeacher.Text
 	student_i = NumStudent.Text
 	
-	If level == "" Then
+	If idlevel == "" Then
 		level_i = level
-	Else
+	Else		
 		level_i = idlevel
 	End If
 	
-	If typecons == "" Then
+	If idcons == "" Then
 		cons_i = cons
 	Else
-		cons_i = typecons
+		cons_i = idcons
 	End If
 	
 	Log(tipe_i)

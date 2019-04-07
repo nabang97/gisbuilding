@@ -28,17 +28,10 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
-	Private CLV1 As CustomListView
 	Private ScrollView1 As ScrollView
 	Private TitleBar As Label
 	Private BackArrow As Label
 	Private PanelBuildingList As Panel
-	Private numfc As B4XView
-	Private namefc As B4XView
-	Private btnGallery As Panel
-	Private PFacility As Panel
-	Private ListItem As Panel
-	Private PanelButton As Panel
 	
 	Dim MsmeName As Label
 	Private TypeOfMsme As Spinner
@@ -54,7 +47,6 @@ Sub Globals
 	Private LblEdit As Label
 	Dim MsmeMap As Map
 	Dim ConsMap As Map
-	Private LblFacility As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -63,6 +55,14 @@ Sub Activity_Create(FirstTime As Boolean)
 	Activity.LoadLayout("MainScrollView")
 	ScrollView1.Panel.LoadLayout("MsmeEdit")
 	PanelToolBar.Visible = False
+	
+	SetBackgroundTintList(MsmeName, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(StandingYear, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(BuildingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(LandArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(Electricity, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(ParkingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	
 	'Set Back arrow
 	BackArrow.Visible= True
 	BackArrow.SetBackgroundImage(LoadBitmap(File.DirAssets,"back-arrow.png"))
@@ -72,11 +72,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		MsmeName.Text = MsmeBuilding.nameBuilding
 		ids = MsmeBuilding.idBuilding
 		Log("Nama :"& MsmeName.Text)
-	Else
-		MsmeName.Text = "Please press on the button and choose an item."
-	End If
-	
-	If SearchBuilding.nameBuilding.Length > 0 Then
+	Else If SearchBuilding.nameBuilding.Length > 0 Then
 		MsmeName.Text = SearchBuilding.nameBuilding
 		ids = SearchBuilding.idBuilding
 		Log("Nama :"&ids)
@@ -84,40 +80,35 @@ Sub Activity_Create(FirstTime As Boolean)
 		MsmeName.Text = "Please press on the button and choose an item."
 	End If
 	
-	
-	CLV1.sv.Height = CLV1.AsView.Height
-	PFacility.Height = CLV1.AsView.Height + LblFacility.Height
-	PanelButton.Top = PFacility.Top + PFacility.Height + 5%y
-	PanelBuildingList.Height = PanelButton.Top + PanelButton.Height +5%y
-	If PanelBuildingList.Height <= 93%y Then
-		PanelBuildingList.Height = 93%y
-		ScrollView1.Panel.Height = PanelBuildingList.Height
-	Else
-		ScrollView1.Panel.Height = PanelBuildingList.Height
-	End If
-	
+	Dim sv As ScrollView
+	ScrollView1.Height=100%y
+	ScrollView1.Panel.Height = PanelBuildingList.Height
 End Sub
 
 Sub Activity_Resume
-	ExecuteRemoteQuery("SELECT D.msme_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id ='"&ids&"'","FASILITAS")
-	ExecuteRemoteQuery("SELECT M.msme_building_id, M.name_of_msme_building, M.building_area, M.land_area, M.parking_area, M.standing_year, M.electricity_capacity, M.address, M.type_of_construction, M.type_of_msme, M.owner_name, M.number_of_employee, M.monthly_income, M.contact_person, ST_X(ST_Centroid(M.geom)) As longitude, ST_Y(ST_CENTROID(M.geom)) As latitude,T.name_of_type As constr, J.name_of_type As typems, ST_AsText(geom) As geom FROM msme_building As M LEFT JOIN type_of_construction As T ON M.type_of_construction=T.type_id LEFT JOIN type_of_msme As J ON M.type_of_msme=J.type_id WHERE M.msme_building_id='"&ids&"'","DATA")
-	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_construction ORDER BY name_of_type ASC ","Construction")
-	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_msme ORDER BY name_of_type ASC","TypeMsme")
 	MsmeMap.Initialize
 	ConsMap.Initialize
+	MsmeMap.Clear
+	ConsMap.Clear
+	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_construction ORDER BY name_of_type ASC ","Construction")
+	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_msme ORDER BY name_of_type ASC","TypeMsme")
+	ExecuteRemoteQuery("SELECT M.msme_building_id, M.name_of_msme_building, M.building_area, M.land_area, M.parking_area, M.standing_year, M.electricity_capacity, M.address, M.type_of_construction, M.type_of_msme, M.owner_name, M.number_of_employee, M.monthly_income, M.contact_person, ST_X(ST_Centroid(M.geom)) As longitude, ST_Y(ST_CENTROID(M.geom)) As latitude,T.name_of_type As constr, J.name_of_type As typems, ST_AsText(geom) As geom FROM msme_building As M LEFT JOIN type_of_construction As T ON M.type_of_construction=T.type_id LEFT JOIN type_of_msme As J ON M.type_of_msme=J.type_id WHERE M.msme_building_id='"&ids&"'","DATA")	
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-Private Sub CreateItem(Width As Int, Title As String, Content As String) As Panel
-	Dim p As B4XView = xui.CreatePanel("")
-	p.LoadLayout("facility_list")
-	p.SetLayoutAnimated(0, 0, 0, Width, 5%y)
-	numfc.Text = Title
-	namefc.Text = Content
-	Return p
+Sub SetBackgroundTintList(View As View,Active As Int, Enabled As Int)
+	Dim States(2,1) As Int
+	States(0,0) = 16842908     'Active
+	States(1,0) = 16842910    'Enabled
+	Dim Color(2) As Int = Array As Int(Active,Enabled)
+	Dim CSL As JavaObject
+	CSL.InitializeNewInstance("android.content.res.ColorStateList",Array As Object(States,Color))
+	Dim jo As JavaObject
+	jo.InitializeStatic("android.support.v4.view.ViewCompat")
+	jo.RunMethod("setBackgroundTintList", Array(View, CSL))
 End Sub
 
 Sub ExecuteRemoteQuery(Query As String, JobName As String)
@@ -134,22 +125,6 @@ Sub JobDone(Job As HttpJob)
 		Dim parser As JSONParser 'mengambil data dalam bentuk json menjadi array
 		parser.Initialize(res)
 		Select Job.JobName
-			Case "FASILITAS"
-				Dim fasilitas_array As List
-				fasilitas_array = parser.NextArray
-				For i=0 To fasilitas_array.Size - 1
-					Dim a As Map
-					a = fasilitas_array.Get(i)
-					'Set CustomListView for Facility
-					
-					Dim content As String = a.Get("name_of_facility")
-					Dim quantity As Int = a.Get("quantity_of_facilities")
-					CLV1.Add(CreateItem(CLV1.AsView.Width, $"${quantity}"$, content), "")
-					CLV1.AsView.Height = ListItem.Height*(i+1)
-				Next
-				Log(content)
-				ProgressDialogHide
-				
 			Case "DATA"
 				Dim data_array As List
 				data_array = parser.NextArray
@@ -163,7 +138,7 @@ Sub JobDone(Job As HttpJob)
 					MsmeName.Text = a.Get("name_of_msme_building")
 					tipp = a.Get("type_of_msme")
 					tipname = a.Get("typems")
-					Log("Data jenis :"&tipp)
+					
 					StandingYear.Text = a.Get("standing_year")
 					BuildingArea.Text = a.Get("building_area")
 					LandArea.Text = a.Get("land_area")
@@ -171,6 +146,7 @@ Sub JobDone(Job As HttpJob)
 					Electricity.Text = a.Get("electricity_capacity")
 					cons = a.Get("type_of_construction")
 					consname = a.Get("constr")
+				Next
 					If StandingYear.Text == "null" Then
 						StandingYear.Text = "0"
 					End If
@@ -186,16 +162,17 @@ Sub JobDone(Job As HttpJob)
 					If LandArea.Text == "null" Then
 						LandArea.Text = "0"
 					End If
-					Log("Data konstruksi :"&cons)
+					Log("Data jenis :"&tipname)
+					Log("Data konstruksi :"&consname)
 					nama=MsmeName.Text
 					tahun= StandingYear.Text
 					ltanah= LandArea.Text
 					lparkir= ParkingArea.Text
 					lbangunan= BuildingArea.Text
 					listrik= Electricity.Text
-					
-				Next
-				
+					TypeOfMsme.SelectedIndex = TypeOfMsme.IndexOf(tipname)
+					Construction.SelectedIndex = Construction.IndexOf(consname)
+					Log("SELECTED CONS : "&Construction.SelectedIndex)
 			Case "Update"
 				ProgressDialogHide
 				Try
@@ -213,13 +190,11 @@ Sub JobDone(Job As HttpJob)
 					a = type_array.Get(i)
 					Dim namatype, idtype As String
 					namatype= a.Get("name_of_type")
-					idtype = a.Get("type_id")
-					
+					idtype = a.Get("type_id")					
 					TypeOfMsme.Add(namatype)
 					MsmeMap.Put(namatype,idtype)
 					Log("ID Map: "&namatype&" "&idtype)
 				Next
-				TypeOfMsme.SelectedIndex = TypeOfMsme.IndexOf(tipname)
 				
 			Case "Construction"
 				Dim cons_array As List
@@ -229,19 +204,35 @@ Sub JobDone(Job As HttpJob)
 					a = cons_array.Get(j)
 					Dim nama_type, id_type As String
 					nama_type= a.Get("name_of_type")
-					id_type = a.Get("type_id")
-					
+					id_type = a.Get("type_id")					
 					Construction.Add(nama_type)
 					ConsMap.Put(nama_type,id_type)
 					Log("ID Map: "&nama_type&" "&id_type)
 				Next
-				Construction.SelectedIndex = Construction.IndexOf(consname)
 		End Select
 	End If
 	Job.Release
 End Sub
 
 Sub btnGallery_Click
+	
+End Sub
+
+Sub TypeOfMsme_ItemClick (Position As Int, Value As Object)
+	Dim id As String
+	id = MsmeMap.Get(Value)
+	typemsme = id
+	Log(typemsme)
+End Sub
+
+Sub Construction_ItemClick (Position As Int, Value As Object)
+	Dim idc As String
+	idc = ConsMap.Get(Value)
+	typecons = idc
+	Log(typecons)
+End Sub
+
+Sub BtnSaveChanges_Click
 	Log(ids)
 	If typemsme == "" Then
 		tipe_i = tipp
@@ -270,19 +261,4 @@ Sub btnGallery_Click
 	End If
 	ProgressDialogShow("loading...")
 	ExecuteRemoteQuery("UPDATE msme_building SET name_of_msme_building = '"&nama&"', type_of_msme = "&tipe_i&", building_area = "&lbangunan_i&", land_area = "&ltanah_i&", parking_area = "&lparkir_i&", standing_year = '"&tahun_i&"', electricity_capacity = "&listrik_i&", type_of_construction = "&cons_i&" WHERE msme_building_id = '"&ids&"'","Update")
-	
-End Sub
-
-Sub TypeOfMsme_ItemClick (Position As Int, Value As Object)
-	Dim id As String
-	id = MsmeMap.Get(Value)
-	typemsme = id
-	Log(typemsme)
-End Sub
-
-Sub Construction_ItemClick (Position As Int, Value As Object)
-	Dim idc As String
-	idc = ConsMap.Get(Value)
-	typecons = idc
-	Log(typecons)
 End Sub

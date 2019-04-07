@@ -55,8 +55,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	ScrollView1.Panel.LoadLayout("HouseDetail")
 	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolBar.Visible = False
-	LblEdit.Visible = True
-	PanelButton.Visible = False
 	'Set Back arrow
 	BackArrow.Visible= True
 	BackArrow.SetBackgroundImage(LoadBitmap(File.DirAssets,"back-arrow.png"))

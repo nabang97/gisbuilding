@@ -45,10 +45,12 @@ Sub Globals
 	Private LblFacility As Label
 	Private Panel4 As Panel
 	Dim TabHost1 As TabHost
-	Dim bmp1, bmp2 As Bitmap
 	Private PanelMap As Panel
 	Private btnRoute As Button
 	Private WebViewRoute As WebView
+	
+	Private editBtn As Button
+	Private editFacility As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -57,7 +59,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	ScrollView1.Panel.LoadLayout("OfficeDetail")
 	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolBar.Visible = False
-	LblEdit.Visible = True
 	
 'Set Back arrow
 	BackArrow.Visible= True
@@ -86,7 +87,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	End If
 	
 	TabHost1.CurrentTab = 1
-	
+	CLV1.Clear
+	ProgressDialogShow("loading...")
+	ExecuteRemoteQuery("SELECT D.office_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id ='"&ids&"'","FASILITAS")
+	ExecuteRemoteQuery("SELECT O.office_building_id, O.name_of_office_building, O.building_area, O.land_area, O.parking_area, O.standing_year, O.electricity_capacity, O.address, O.type_of_construction, O.type_of_office, ST_X(ST_Centroid(O.geom)) As longitude, ST_Y(ST_CENTROID(O.geom)) As latitude,T.name_of_type As constr, J.name_of_type As typeof,	ST_AsText(geom) As geom	FROM office_building As O LEFT JOIN type_of_construction As T ON O.type_of_construction=T.type_id LEFT JOIN type_of_office As J ON O.type_of_office=J.type_id WHERE O.office_building_id='"&ids&"'","DATA")
 	
 End Sub
 
@@ -177,10 +181,6 @@ Sub BackArrow_Click
 	Activity.Finish
 End Sub
 
-Sub LblEdit_Click
-	StartActivity(OfficeEdit)
-End Sub
-
 Sub TabHost1_TabChanged
 	
 	Select TabHost1.CurrentTab
@@ -199,4 +199,12 @@ Sub TabHost1_TabChanged
 			Msgbox("Current tab is " & TabHost1.CurrentTab, "")
 	End Select
 
+End Sub
+
+Sub editBtn_Click
+	StartActivity(OfficeEdit)
+End Sub
+
+Sub editFacility_Click
+	StartActivity(EditBuildingFacility)
 End Sub

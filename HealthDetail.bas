@@ -53,6 +53,8 @@ Sub Globals
 	Private PanelMap As Panel
 	Private btnRoute As Button
 	Private WebViewRoute As WebView
+	Private editBtn As Button
+	Private editFacility As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -61,7 +63,6 @@ Sub Activity_Create(FirstTime As Boolean)
 	ScrollView1.Panel.LoadLayout("HealthDetail")
 	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolbar.Visible = False
-	LblEdit.Visible = True
 	'Set Back arrow
 	BackArrow.Visible= True
 	BackArrow.SetBackgroundImage(LoadBitmap(File.DirAssets,"back-arrow.png"))
@@ -92,11 +93,10 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	CLV1.Clear
+	CLV1.Clear	
 	ProgressDialogHide
 	ExecuteRemoteQuery("SELECT D.health_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_health_building_facilities As D LEFT JOIN health_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id ='"&ids&"'","FASILITAS")
 	ExecuteRemoteQuery("SELECT H.health_building_id, H.name_of_health_building, H.building_area, H.land_area, H.parking_area, H.standing_year, H.electricity_capacity, H.address, H.type_of_construction, H.type_of_health_building, H.name_of_head, H.number_of_medical_personnel, H.number_of_nonmedical_personnel,ST_X(ST_Centroid(H.geom)) As longitude, ST_Y(ST_CENTROID(H.geom)) As latitude,	T.name_of_type As constr, J.name_of_type As typeh, ST_AsText(geom) As geom FROM health_building As H LEFT JOIN type_of_construction As T ON H.type_of_construction=T.type_id LEFT JOIN type_of_health_building As J ON H.type_of_health_building=J.type_id	WHERE H.health_building_id='"&ids&"'","DATA")
-
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
@@ -181,6 +181,7 @@ Sub JobDone(Job As HttpJob)
 					Electricity.Text = a.Get("electricity_capacity")
 					Construction.Text = a.Get("constr")
 				Next
+			ProgressDialogHide
 		End Select
 	End If
 	Job.Release
@@ -212,5 +213,13 @@ Sub BackArrow_Click
 End Sub
 
 Sub LblEdit_Click
+	
+End Sub
+
+Sub editBtn_Click
 	StartActivity(HealthEdit)
+End Sub
+
+Sub editFacility_Click
+	
 End Sub

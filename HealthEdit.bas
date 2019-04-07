@@ -25,16 +25,10 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
-	Private CLV1 As CustomListView
 	Private ScrollView1 As ScrollView
 	Private TitleBar As Label
 	Private BackArrow As Label
 	Private PanelBuildingList As Panel
-	Private numfc As B4XView
-	Private namefc As B4XView
-	Private PFacility As Panel
-	Private ListItem As Panel
-	Private PanelButton As Panel
 	Private PanelToolbar As Panel
 	Private LblEdit As Label
 	
@@ -50,18 +44,17 @@ Sub Globals
 	Private ParkingArea As Label
 	Private Electricity As Label
 	Private Construction As Spinner
-	Private LblFacility As Label
 	Private HealthName As Label
 	
 	Dim HealthMap As Map
 	Dim ConsMap As Map
+	Private BtnSaveChanges As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Set Layout
 	Activity.LoadLayout("MainScrollView")
 	ScrollView1.Panel.LoadLayout("HealthEdit")
-	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolbar.Visible = False
 	LblEdit.Visible = True
 	'Set Back arrow
@@ -69,18 +62,22 @@ Sub Activity_Create(FirstTime As Boolean)
 	BackArrow.SetBackgroundImage(LoadBitmap(File.DirAssets,"back-arrow.png"))
 	TitleBar.Text="Building Detail"
 	
-	
+	SetBackgroundTintList(HealthName, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(HeadOffice, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(NumMedical, Colors.ARGB(225,3,155,230), Colors.LightGray)	
+	SetBackgroundTintList(NumNonMedical, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(StandingYear, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(BuildingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(LandArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(Electricity, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(ParkingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
 	
 	'Set building name
 	If HealthBuilding.nameBuilding.Length > 0 Then
 		HealthName.Text = HealthBuilding.nameBuilding
 		ids =HealthBuilding.idBuilding
 		Log(ids)
-	Else
-		HealthName.Text = "Please press on the button and choose an item."
-	End If
-	
-	If SearchBuilding.nameBuilding.Length > 0 Then
+	Else If SearchBuilding.nameBuilding.Length > 0 Then
 		HealthName.Text = SearchBuilding.nameBuilding
 		ids =SearchBuilding.idBuilding
 		Log(ids)
@@ -88,42 +85,39 @@ Sub Activity_Create(FirstTime As Boolean)
 		HealthName.Text = "Please press on the button and choose an item."
 	End If
 	
+	
 	Dim sv As ScrollView
-	CLV1.sv.Height = CLV1.AsView.Height
-	PFacility.Height = CLV1.AsView.Height + LblFacility.Height
-	PanelButton.Top = PFacility.Top + PFacility.Height + 5%y
-	PanelBuildingList.Height = PanelButton.Top + PanelButton.Height +5%y
-	If PanelBuildingList.Height <= 93%y Then
-		PanelBuildingList.Height = 93%y
-		ScrollView1.Panel.Height = PanelBuildingList.Height
-	Else
-		ScrollView1.Panel.Height = PanelBuildingList.Height
-	End If
-
+	ScrollView1.Height=100%y	
+	PanelBuildingList.Height = BtnSaveChanges.Top+BtnSaveChanges.Height+10%y
+	ScrollView1.Panel.Height = PanelBuildingList.Height
 End Sub
 
 Sub Activity_Resume
-	CLV1.Clear
-	ProgressDialogShow("Loading...")
-	ExecuteRemoteQuery("SELECT D.health_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_health_building_facilities As D LEFT JOIN health_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id ='"&ids&"'","FASILITAS")
-	ExecuteRemoteQuery("SELECT H.health_building_id, H.name_of_health_building, H.building_area, H.land_area, H.parking_area, H.standing_year, H.electricity_capacity, H.address, H.type_of_construction, H.type_of_health_services, H.name_of_head, H.number_of_medical_personnel, H.number_of_nonmedical_personnel, ST_X(ST_Centroid(H.geom)) As longitude, ST_Y(ST_CENTROID(H.geom)) As latitude,T.name_of_type As constr, J.name_of_type As typeh,ST_AsText(geom) As geom FROM health_building As H LEFT JOIN type_of_construction As T ON H.type_of_construction=T.type_id LEFT JOIN type_of_health_services As J ON H.type_of_health_services=J.type_id WHERE H.health_building_id='"&ids&"'","DATA")
-	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_construction ORDER BY name_of_type ASC ","Construction")
-	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_health_services ORDER BY name_of_type ASC","TypeHealth")
 	HealthMap.Initialize
 	ConsMap.Initialize
+	HealthMap.Clear
+	ConsMap.Clear
+	ProgressDialogShow("Loading...")
+	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_construction ORDER BY name_of_type ASC ","Construction")
+	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_health_building ORDER BY name_of_type ASC","TypeHealth")
+	ExecuteRemoteQuery("SELECT H.health_building_id, H.name_of_health_building, H.building_area, H.land_area, H.parking_area, H.standing_year, H.electricity_capacity, H.address, H.type_of_construction, H.type_of_health_building, H.name_of_head, H.number_of_medical_personnel, H.number_of_nonmedical_personnel, ST_X(ST_Centroid(H.geom)) As longitude, ST_Y(ST_CENTROID(H.geom)) As latitude,T.name_of_type As constr, J.name_of_type As typeh,ST_AsText(geom) As geom FROM health_building As H LEFT JOIN type_of_construction As T ON H.type_of_construction=T.type_id LEFT JOIN type_of_health_building As J ON H.type_of_health_building=J.type_id WHERE H.health_building_id='"&ids&"'","DATA")
+	
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-Private Sub CreateItem(Width As Int, Title As String, Content As String) As Panel
-	Dim p As B4XView = xui.CreatePanel("")
-	p.LoadLayout("facility_list")
-	p.SetLayoutAnimated(0, 0, 0, Width, 5%y)
-	numfc.Text = Title
-	namefc.Text = Content
-	Return p
+Sub SetBackgroundTintList(View As View,Active As Int, Enabled As Int)
+	Dim States(2,1) As Int
+	States(0,0) = 16842908     'Active
+	States(1,0) = 16842910    'Enabled
+	Dim Color(2) As Int = Array As Int(Active,Enabled)
+	Dim CSL As JavaObject
+	CSL.InitializeNewInstance("android.content.res.ColorStateList",Array As Object(States,Color))
+	Dim jo As JavaObject
+	jo.InitializeStatic("android.support.v4.view.ViewCompat")
+	jo.RunMethod("setBackgroundTintList", Array(View, CSL))
 End Sub
 
 Sub ExecuteRemoteQuery(Query As String, JobName As String)
@@ -139,25 +133,7 @@ Sub JobDone(Job As HttpJob)
 		Log("Response from server :"& res)
 		Dim parser As JSONParser 'mengambil data dalam bentuk json menjadi array
 		parser.Initialize(res)
-		Select Job.JobName
-			Case "FASILITAS"
-				Dim fasilitas_array As List
-				fasilitas_array = parser.NextArray
-				For i=0 To fasilitas_array.Size - 1
-					Dim a As Map
-					a = fasilitas_array.Get(i)
-					'Set CustomListView for Facility
-					Dim content As String = a.Get("name_of_facility")
-					Dim quantity As Int = a.Get("quantity_of_facilities")
-					CLV1.Add(CreateItem(CLV1.AsView.Width, $"${quantity}"$, content), "")
-					CLV1.AsView.Height = ListItem.Height*(i+1)
-				Next
-				
-				Log(content)
-				ProgressDialogHide
-				Log(content)
-				ProgressDialogHide
-				
+		Select Job.JobName				
 			Case "DATA"
 				Dim data_array As List
 				data_array = parser.NextArray
@@ -169,8 +145,8 @@ Sub JobDone(Job As HttpJob)
 					Log(lat)
 					Log(lng)
 					HealthName.Text = a.Get("name_of_health_building")
-					tipp = a.Get("type_of_msme")
-					tipname = a.Get("typems")
+					tipp = a.Get("type_of_health_building")
+					tipname = a.Get("typeh")
 					Log("Data jenis :"&tipp)
 					HeadOffice.Text = a.Get("name_of_head")
 					NumMedical.Text = a.Get("number_of_medical_personnel")
@@ -182,6 +158,7 @@ Sub JobDone(Job As HttpJob)
 					Electricity.Text = a.Get("electricity_capacity")
 					cons = a.Get("type_of_construction")
 					consname = a.Get("constr")
+				Next
 					If StandingYear.Text == "null" Then
 						StandingYear.Text = "0"
 					End If
@@ -207,8 +184,11 @@ Sub JobDone(Job As HttpJob)
 					lparkir= ParkingArea.Text
 					lbangunan= BuildingArea.Text
 					listrik= Electricity.Text
-				
-				Next
+					
+					TypeOfHealth.SelectedIndex = TypeOfHealth.IndexOf(tipname)					
+					Construction.SelectedIndex = Construction.IndexOf(consname)
+										
+					ProgressDialogHide
 			Case "TypeHealth"
 				Dim type_array As List
 				type_array = parser.NextArray
@@ -223,7 +203,6 @@ Sub JobDone(Job As HttpJob)
 					HealthMap.Put(namatype,idtype)
 					Log("ID Map: "&namatype&" "&idtype)
 				Next
-				TypeOfHealth.SelectedIndex = TypeOfHealth.IndexOf(tipname)
 				
 			Case "Construction"
 				Dim cons_array As List
@@ -239,7 +218,6 @@ Sub JobDone(Job As HttpJob)
 					ConsMap.Put(nama_type,id_type)
 					Log("ID Map: "&nama_type&" "&id_type)
 				Next
-				Construction.SelectedIndex = Construction.IndexOf(consname)
 				
 			Case "Update"
 				ProgressDialogHide
@@ -260,6 +238,25 @@ Sub BackArrow_Click
 End Sub
 
 Sub btnGallery_Click
+	
+	
+End Sub
+
+Sub TypeOfHealth_ItemClick (Position As Int, Value As Object)
+	Dim id As String
+	id = HealthMap.Get(Value)
+	typehealth = id
+	Log(typehealth)
+End Sub
+
+Sub Construction_ItemClick (Position As Int, Value As Object)
+	Dim idc As String
+	idc = ConsMap.Get(Value)
+	typecons = idc
+	Log(typecons)
+End Sub
+
+Sub BtnSaveChanges_Click
 	Log(ids)
 	If typehealth == "" Then
 		tipe_i = tipp
@@ -289,20 +286,5 @@ Sub btnGallery_Click
 		Log(""&tipe_i&" is not a number")
 	End If
 	ProgressDialogShow("loading...")
-	ExecuteRemoteQuery("UPDATE health_building SET name_of_health_building = '"&nama&"', type_of_health_services = "&tipe_i&", building_area = "&lbangunan_i&",	land_area = "&ltanah_i&",parking_area = "&lparkir_i&",standing_year = "&tahun_i&",	electricity_capacity = "&listrik_i&",type_of_construction = "&cons_i&",	name_of_head = '"&kepala&"',number_of_medical_personnel = "&medic_i&",number_of_nonmedical_personnel = "&nonmedic_i&" WHERE health_building_id = '"&ids&"'","Update")
-	
-End Sub
-
-Sub TypeOfHealth_ItemClick (Position As Int, Value As Object)
-	Dim id As String
-	id = HealthMap.Get(Value)
-	typehealth = id
-	Log(typehealth)
-End Sub
-
-Sub Construction_ItemClick (Position As Int, Value As Object)
-	Dim idc As String
-	idc = ConsMap.Get(Value)
-	typecons = idc
-	Log(typecons)
+	ExecuteRemoteQuery("UPDATE health_building SET name_of_health_building = '"&nama&"', type_of_health_building = "&tipe_i&", building_area = "&lbangunan_i&",	land_area = "&ltanah_i&",parking_area = "&lparkir_i&",standing_year = "&tahun_i&",	electricity_capacity = "&listrik_i&",type_of_construction = "&cons_i&",	name_of_head = '"&kepala&"',number_of_medical_personnel = "&medic_i&",number_of_nonmedical_personnel = "&nonmedic_i&" WHERE health_building_id = '"&ids&"'","Update")
 End Sub

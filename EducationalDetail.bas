@@ -49,20 +49,20 @@ Sub Globals
 	Private LblFacility As Label
 	'Set id
 	Dim ids As String
-	
-	Private LblEdit As Label
 	Private PanelMap As Panel
 	Private btnRoute As Button
 	Private WebViewRoute As WebView
+	Private editBtn As Button
+	Private editFacility As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Set Layout
 	Activity.LoadLayout("MainScrollView")
 	ScrollView1.Panel.LoadLayout("EducationalDetail")
+	ScrollView1.Height=100%y
 	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolbar.Visible = False
-	LblEdit.Visible = True
 	
 	TabHost1.AddTab("Map","tabMap")
 	TabHost1.AddTab("Detail","Educational_tabDetail")
@@ -148,9 +148,8 @@ Sub JobDone(Job As HttpJob)
 						TabHost1.Height = PFacility.Top+PFacility.Height + 10%y
 				End Select
 				
-				PanelBuildingList.Height = PanelBuildingList.Height + TabHost1.Height + TabHost1.Top + 2%y
-				ScrollView1.Panel.Height = PanelBuildingList.Height
-				ScrollView1.Height = ScrollView1.Panel.Height + 30%y
+				PanelBuildingList.Height = TabHost1.Height + TabHost1.Top + 2%y
+				ScrollView1.Panel.Height = PanelBuildingList.Height + 10%y
 '				If PanelBuildingList.Height <= 93%y Then
 '					PanelBuildingList.Height = 93%y
 '					ScrollView1.Panel.Height = PanelBuildingList.Height
@@ -205,7 +204,6 @@ Sub TabHost1_TabChanged
 			Log("tabHost height: "&TabHost1.Height)
 			PanelBuildingList.Height = TabHost1.Height + TabHost1.Top
 			ScrollView1.Panel.Height = PanelBuildingList.Height
-			ScrollView1.Height = ScrollView1.Panel.Height
 		Case 1
 			
 		Case 2
@@ -219,5 +217,13 @@ Sub BackArrow_Click
 End Sub
 
 Sub LblEdit_Click
+	
+End Sub
+
+Sub editBtn_Click
 	StartActivity(EducationalEdit)
+End Sub
+
+Sub editFacility_Click
+	StartActivity(EditBuildingFacility)
 End Sub

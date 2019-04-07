@@ -45,7 +45,14 @@
 		<activity
 			android:windowSoftInputMode="stateHidden"
 			android:launchMode="singleTop"
-			android:name=".housebuilding"
+			android:name=".worshipdetail"
+			android:label="GIS Koto Gadang"
+			android:screenOrientation="unspecified">
+		</activity>
+		<activity
+			android:windowSoftInputMode="stateHidden"
+			android:launchMode="singleTop"
+			android:name=".worshipedit"
 			android:label="GIS Koto Gadang"
 			android:screenOrientation="unspecified">
 		</activity>
@@ -53,6 +60,34 @@
 			android:windowSoftInputMode="stateHidden"
 			android:launchMode="singleTop"
 			android:name=".login"
+			android:label="GIS Koto Gadang"
+			android:screenOrientation="unspecified">
+		</activity>
+		<activity
+			android:windowSoftInputMode="stateHidden"
+			android:launchMode="singleTop"
+			android:name=".editbuildingfacility"
+			android:label="GIS Koto Gadang"
+			android:screenOrientation="unspecified">
+		</activity>
+		<activity
+			android:windowSoftInputMode="stateHidden"
+			android:launchMode="singleTop"
+			android:name=".addbuildingfacility"
+			android:label="GIS Koto Gadang"
+			android:screenOrientation="unspecified">
+		</activity>
+		<activity
+			android:windowSoftInputMode="stateHidden"
+			android:launchMode="singleTop"
+			android:name=".worshipbuilding"
+			android:label="GIS Koto Gadang"
+			android:screenOrientation="unspecified">
+		</activity>
+		<activity
+			android:windowSoftInputMode="stateHidden"
+			android:launchMode="singleTop"
+			android:name=".housebuilding"
 			android:label="GIS Koto Gadang"
 			android:screenOrientation="unspecified">
 		</activity>
@@ -74,13 +109,6 @@
 			android:windowSoftInputMode="stateHidden"
 			android:launchMode="singleTop"
 			android:name=".msmedetail"
-			android:label="GIS Koto Gadang"
-			android:screenOrientation="unspecified">
-		</activity>
-		<activity
-			android:windowSoftInputMode="stateHidden"
-			android:launchMode="singleTop"
-			android:name=".worshipdetail"
 			android:label="GIS Koto Gadang"
 			android:screenOrientation="unspecified">
 		</activity>
@@ -122,13 +150,6 @@
 		<activity
 			android:windowSoftInputMode="stateHidden"
 			android:launchMode="singleTop"
-			android:name=".worshipbuilding"
-			android:label="GIS Koto Gadang"
-			android:screenOrientation="unspecified">
-		</activity>
-		<activity
-			android:windowSoftInputMode="stateHidden"
-			android:launchMode="singleTop"
 			android:name=".gallery"
 			android:label="GIS Koto Gadang"
 			android:screenOrientation="unspecified">
@@ -137,13 +158,6 @@
 			android:windowSoftInputMode="stateHidden"
 			android:launchMode="singleTop"
 			android:name=".officebuilding"
-			android:label="GIS Koto Gadang"
-			android:screenOrientation="unspecified">
-		</activity>
-		<activity
-			android:windowSoftInputMode="stateHidden"
-			android:launchMode="singleTop"
-			android:name=".worshipedit"
 			android:label="GIS Koto Gadang"
 			android:screenOrientation="unspecified">
 		</activity>

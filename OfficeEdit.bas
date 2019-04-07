@@ -29,19 +29,11 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
-	Private CLV1 As CustomListView
 	Private ScrollView1 As ScrollView
 	Private TitleBar As Label
 	Private BackArrow As Label
 	Private PanelBuildingList As Panel
 	Private PanelToolBar As Panel
-	
-	Private numfc As B4XView
-	Private namefc As B4XView
-	Private btnGallery As Panel
-	Private PFacility As Panel
-	Private ListItem As Panel
-	Private PanelButton As Panel
 	
 	Dim OfficeName As Label
 	Private TypeOfOffice As Spinner
@@ -54,6 +46,7 @@ Sub Globals
 	Private PanelToolBar As Panel
 	Dim OfficeMap As Map
 	Dim ConsMap As Map
+	Private BtnSaveChanges As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -63,7 +56,12 @@ Sub Activity_Create(FirstTime As Boolean)
 	ScrollView1.Panel.LoadLayout("OfficeEdit")
 	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolBar.Visible = False
-	
+	SetBackgroundTintList(OfficeName, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(StandingYear, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(BuildingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(LandArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(Electricity, Colors.ARGB(225,3,155,230), Colors.LightGray)
+	SetBackgroundTintList(ParkingArea, Colors.ARGB(225,3,155,230), Colors.LightGray)
 	'Set Back arrow
 	BackArrow.Visible= True
 	BackArrow.SetBackgroundImage(LoadBitmap(File.DirAssets,"back-arrow.png"))
@@ -72,13 +70,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Set building name
 	If OfficeBuilding.nameBuilding.Length > 0 Then
 		OfficeName.Text = OfficeBuilding.nameBuilding
-		ids = OfficeBuilding.idBuilding
+		ids = WorshipBuilding.idBuilding
 		Log(ids)
-	Else
-		OfficeName.Text = "Please press on the button and choose an item."
-	End If
-	
-	If SearchBuilding.nameBuilding.Length > 0 Then
+	Else If SearchBuilding.nameBuilding.Length > 0 Then
 		OfficeName.Text = SearchBuilding.nameBuilding
 		ids = SearchBuilding.idBuilding
 		Log(ids)
@@ -86,37 +80,36 @@ Sub Activity_Create(FirstTime As Boolean)
 		OfficeName.Text = "Please press on the button and choose an item."
 	End If
 	
-	
-	PFacility.Height=CLV1.AsView.Height + 30dip
 	Dim sv As ScrollView
-	CLV1.sv.Height= CLV1.AsView.Height + 2%y
-	PanelBuildingList.Height = PanelBuildingList.Height + PFacility.Height
-	ScrollView1.Panel.Height = PanelBuildingList.Height - 16%y
-	PanelButton.Top= PanelBuildingList.Height - 30%y
-	ToastMessageShow($"${CLV1.sv.ScrollViewInnerPanel.Height}"$,True)
-
+	ScrollView1.Height=100%y
+	ScrollView1.Panel.Height = PanelBuildingList.Height
 End Sub
 
 Sub Activity_Resume
-	ExecuteRemoteQuery("SELECT D.office_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id ='"&ids&"'","FASILITAS")
+	OfficeMap.Initialize
+	ConsMap.Initialize
+	OfficeMap.Clear
+	ConsMap.Clear
+	ProgressDialogShow("Loading...")
 	ExecuteRemoteQuery("SELECT O.office_building_id, O.name_of_office_building, O.building_area, O.land_area, O.parking_area, O.standing_year, O.electricity_capacity, O.address, O.type_of_construction, O.type_of_office, ST_X(ST_Centroid(O.geom)) As longitude, ST_Y(ST_CENTROID(O.geom)) As latitude,T.name_of_type As constr, J.name_of_type As typeof,	ST_AsText(geom) As geom	FROM office_building As O LEFT JOIN type_of_construction As T ON O.type_of_construction=T.type_id LEFT JOIN type_of_office As J ON O.type_of_office=J.type_id WHERE O.office_building_id='"&ids&"'","DATA")
 	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_office ORDER BY name_of_type ASC","TypeOffice")
 	ExecuteRemoteQuery("SELECT type_id, name_of_type FROM type_of_construction ORDER BY name_of_type ASC ","Construction")
-	OfficeMap.Initialize
-	ConsMap.Initialize
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
 
-Private Sub CreateItem(Width As Int, Title As String, Content As String) As Panel
-	Dim p As B4XView = xui.CreatePanel("")
-	p.LoadLayout("facility_list")
-	p.SetLayoutAnimated(0, 0, 0, Width, 5%y)
-	numfc.Text = Title
-	namefc.Text = Content
-	Return p
+Sub SetBackgroundTintList(View As View,Active As Int, Enabled As Int)
+	Dim States(2,1) As Int
+	States(0,0) = 16842908     'Active
+	States(1,0) = 16842910    'Enabled
+	Dim Color(2) As Int = Array As Int(Active,Enabled)
+	Dim CSL As JavaObject
+	CSL.InitializeNewInstance("android.content.res.ColorStateList",Array As Object(States,Color))
+	Dim jo As JavaObject
+	jo.InitializeStatic("android.support.v4.view.ViewCompat")
+	jo.RunMethod("setBackgroundTintList", Array(View, CSL))
 End Sub
 
 Sub ExecuteRemoteQuery(Query As String, JobName As String)
@@ -132,23 +125,7 @@ Sub JobDone(Job As HttpJob)
 		Log("Response from server :"& res)
 		Dim parser As JSONParser 'mengambil data dalam bentuk json menjadi array
 		parser.Initialize(res)
-		Select Job.JobName
-			Case "FASILITAS"
-				Dim fasilitas_array As List
-				fasilitas_array = parser.NextArray
-				For i=0 To fasilitas_array.Size - 1
-					Dim a As Map
-					a = fasilitas_array.Get(i)
-					'Set CustomListView for Facility
-					
-					Dim content As String = a.Get("name_of_facility")
-					Dim quantity As Int = a.Get("quantity_of_facilities")
-					CLV1.Add(CreateItem(CLV1.AsView.Width, $"${quantity}"$, content), "")
-					CLV1.AsView.Height = ListItem.Height*(i+1)
-				Next
-				Log(content)
-				ProgressDialogHide
-				
+		Select Job.JobName				
 			Case "DATA"
 				Dim data_array As List
 				data_array = parser.NextArray
@@ -170,7 +147,8 @@ Sub JobDone(Job As HttpJob)
 					Electricity.Text = a.Get("electricity_capacity")
 					cons = a.Get("type_of_construction")
 					consname = a.Get("constr")
-					If StandingYear.Text == "" Then 
+				Next
+					If StandingYear.Text == "" Then
 						StandingYear.Text = "0"
 					End If
 					If BuildingArea.Text == "" Then
@@ -189,9 +167,9 @@ Sub JobDone(Job As HttpJob)
 					lparkir= ParkingArea.Text
 					lbangunan= BuildingArea.Text
 					listrik= Electricity.Text
-					
-				Next
-				
+					TypeOfOffice.SelectedIndex = TypeOfOffice.IndexOf(tipname)
+					Construction.SelectedIndex = Construction.IndexOf(consname)
+				ProgressDialogHide
 			Case "Update"
 				ProgressDialogHide
 				Try
@@ -215,7 +193,6 @@ Sub JobDone(Job As HttpJob)
 					OfficeMap.Put(namatype,idtype)
 					Log("ID Map: "&namatype&" "&idtype)
 				Next
-				TypeOfOffice.SelectedIndex = TypeOfOffice.IndexOf(tipname)
 				
 			Case "Construction"
 				Dim cons_array As List
@@ -231,43 +208,14 @@ Sub JobDone(Job As HttpJob)
 					ConsMap.Put(nama_type,id_type)
 					Log("ID Map: "&nama_type&" "&id_type)
 				Next
-				Construction.SelectedIndex = Construction.IndexOf(consname)
 		End Select
 	End If
 	Job.Release
 End Sub
 
-'Sub btnGallery_Click
-'	Log(ids)
-'	If typeoffice == "" Then
-'		tipe_i = tipp
-'	Else
-'		tipe_i = typeoffice
-'	End If
-'	
-'	lbangunan_i = BuildingArea.Text
-'	lparkir_i = ParkingArea.Text
-'	ltanah_i = LandArea.Text
-'	listrik_i = Electricity.Text
-'	tahun_i = StandingYear.Text
-'	
-'	If typecons == "" Then
-'		cons_i = cons
-'	Else
-'		cons_i = typecons
-'	End If
-'	
-'	Log(tipe_i)
-'	Log(cons_i)
-'	If IsNumber(tipe_i) Then
-'		Log(""&tipe_i&" is a number")
-'	Else
-'		Log(""&tipe_i&" is not a number")
-'	End If
-'	ProgressDialogShow("loading...")
-'	ExecuteRemoteQuery("UPDATE office_building SET name_of_office_building = '"&nama&"', type_of_office = "&tipe_i&", building_area = "&lbangunan_i&", land_area = "&ltanah_i&", parking_area = "&lparkir_i&", standing_year = '"&tahun_i&"', electricity_capacity = "&listrik_i&", type_of_construction = "&cons_i&" WHERE office_building_id = '"&ids&"'","Update")
-'	
-'End Sub
+Sub btnGallery_Click
+	
+End Sub
 
 Sub TypeOfOffice_ItemClick (Position As Int, Value As Object)
 	Dim id As String
@@ -282,3 +230,36 @@ Sub Construction_ItemClick (Position As Int, Value As Object)
 	typecons = idc
 	Log(typecons)
 End Sub
+
+Sub BtnSaveChanges_Click
+	Log(ids)
+	If typeoffice == "" Then
+		tipe_i = tipp
+	Else
+		tipe_i = typeoffice
+	End If
+	
+	lbangunan_i = BuildingArea.Text
+	lparkir_i = ParkingArea.Text
+	ltanah_i = LandArea.Text
+	listrik_i = Electricity.Text
+	tahun_i = StandingYear.Text
+	
+	If typecons == "" Then
+		cons_i = cons
+	Else
+		cons_i = typecons
+	End If
+	
+	Log(tipe_i)
+	Log(cons_i)
+	If IsNumber(tipe_i) Then
+		Log(""&tipe_i&" is a number")
+	Else
+		Log(""&tipe_i&" is not a number")
+	End If
+	ProgressDialogShow("loading...")
+	ExecuteRemoteQuery("UPDATE office_building SET name_of_office_building = '"&nama&"', type_of_office = "&tipe_i&", building_area = "&lbangunan_i&", land_area = "&ltanah_i&", parking_area = "&lparkir_i&", standing_year = '"&tahun_i&"', electricity_capacity = "&listrik_i&", type_of_construction = "&cons_i&" WHERE office_building_id = '"&ids&"'","Update")
+	
+End Sub
+
