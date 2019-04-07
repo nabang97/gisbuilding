@@ -933,6 +933,8 @@ Sub SearchBtn_Click
 					Else
 					ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat,	ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak FROM msme_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
 					End If
+				Case "income"
+					ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) AS latitude FROM msme_building WHERE monthly_income BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_msme_building",idspin)
 			End Select
 			
 		Case "House"
@@ -1038,6 +1040,12 @@ Sub SpinBuilding_ItemClick (Position As Int, Value As Object)
 			spinnerMap.Put("Type","type")
 			SpinSearch.Add("Jorong")
 			spinnerMap.Put("Jorong","jorong")
+			If File.Exists(File.DirInternal,"datastore") Then
+				If Main.kvs.ContainsKey("role") == True Then
+					SpinSearch.Add("Income")
+					spinnerMap.Put("Income","income")
+				End If
+			End If
 			SpinSearch.Add("Construction")
 			spinnerMap.Put("Construction","construction")
 			SpinSearch.Add("Facility")
