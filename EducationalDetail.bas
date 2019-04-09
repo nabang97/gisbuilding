@@ -19,6 +19,8 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
+	Dim menu As ArcMenu
+	Dim menuButtonStatic, menuButtonAnimated As Bitmap
 	Private CLV1 As CustomListView
 	Private ScrollView1 As ScrollView
 	Private TitleBar As Label
@@ -54,6 +56,7 @@ Sub Globals
 	Private WebViewRoute As WebView
 	Private editBtn As Button
 	Private editFacility As Button
+	Private PanelGallery As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -208,6 +211,24 @@ Sub TabHost1_TabChanged
 			
 		Case 2
 			Msgbox("Current tab is " & TabHost1.CurrentTab, "")
+			PanelGallery.Height = 100%y - (TabHost1.Top + 10%y)
+			TabHost1.Height = PanelGallery.Top + PanelGallery.Height
+			PanelBuildingList.Height = TabHost1.Height + TabHost1.Top
+			ScrollView1.Panel.Height = PanelBuildingList.Height
+			'TabHost1.Color=Colors.Black
+			menu.Initialize(PanelGallery, Me, "ArcMenu", LoadBitmap(File.DirAssets, "menu_button_anim.png"), LoadBitmap(File.DirAssets, "menu_button_bg.png"), 50%x, 60%y)
+			menu.SetDegreeSpan(180)
+			menu.SetMenuItemRadius(20%x)
+			menu.AddItem(LoadBitmap(File.DirAssets, "album-a.png"))
+			menu.AddItem(LoadBitmap(File.DirAssets, "maps-a.png"))
+			menu.AddItem(LoadBitmap(File.DirAssets, "sett-a.png"))
+			menu.AddItem(LoadBitmap(File.DirAssets, "bt-a.png"))
+			menu.AddItem(LoadBitmap(File.DirAssets, "mess-a.png"))
+			menu.AddItem(LoadBitmap(File.DirAssets, "info-a.png"))
+			
+'	menu.AddItem(LoadBitmap(File.DirAssets, "bt.png"))
+'	menu.AddItem(LoadBitmap(File.DirAssets, "mess.png"))
+'	menu.AddItem(LoadBitmap(File.DirAssets, "info.png"))
 	End Select
 
 End Sub
@@ -216,8 +237,21 @@ Sub BackArrow_Click
 	Activity.Finish
 End Sub
 
-Sub LblEdit_Click
+Sub ArcMenu_Click(position As Int)
 	
+	Select position
+		Case 1
+			StartActivity(MainCamera)
+			ToastMessageShow("Item " & position & " Clicked", False)			
+	End Select
+End Sub
+
+Sub ArcMenu_LongClick(position As Int)
+	ToastMessageShow("Item " & position & " LongClicked", False)
+End Sub
+
+Sub ArcMenu_AnimationEnd(Open As Boolean)
+	ToastMessageShow("AnimationEnded, Menu Open = " & Open, False)
 End Sub
 
 Sub editBtn_Click

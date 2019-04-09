@@ -18,6 +18,9 @@ End Sub
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
+	
+	Dim menu As ArcMenu
+	Dim menuButtonStatic, menuButtonAnimated As Bitmap
 	Private ScrollView1 As ScrollView
 	Private Panel3 As Panel
 	Private PanelBar As Panel
@@ -36,6 +39,15 @@ Sub Activity_Create(FirstTime As Boolean)
 	ScrollView1.Height = Panel3.Height
 	ScrollView1.Panel.Height = Panel3.Height
 	
+	menu.Initialize(Activity, Me, "ArcMenu", LoadBitmap(File.DirAssets, "menu_button_anim.png"), LoadBitmap(File.DirAssets, "menu_button_bg.png"), 50%x, 80%y)
+	menu.SetDegreeSpan(180)
+	menu.SetMenuItemRadius(20%x)
+	menu.AddItem(LoadBitmap(File.DirAssets, "album-a.png"))
+	menu.AddItem(LoadBitmap(File.DirAssets, "maps-a.png"))
+	menu.AddItem(LoadBitmap(File.DirAssets, "sett-a.png"))
+	menu.AddItem(LoadBitmap(File.DirAssets, "bt-a.png"))
+	menu.AddItem(LoadBitmap(File.DirAssets, "mess-a.png"))
+	menu.AddItem(LoadBitmap(File.DirAssets, "info-a.png"))
 End Sub
 
 Sub Activity_Resume
@@ -46,6 +58,19 @@ End Sub
 Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
+
+Sub ArcMenu_Click(position As Int)
+	ToastMessageShow("Item " & position & " Clicked", False)
+End Sub
+
+Sub ArcMenu_LongClick(position As Int)
+	ToastMessageShow("Item " & position & " LongClicked", False)
+End Sub
+
+Sub ArcMenu_AnimationEnd(Open As Boolean)
+	ToastMessageShow("AnimationEnded, Menu Open = " & Open, False)
+End Sub
+
 
 Sub Activity_KeyPress (KeyCode As Int) As Boolean  ' Return true to consume the event
 	Dim isLogin As Boolean
