@@ -64,9 +64,10 @@ Public Sub Initialize(Activity As Panel, Module As Object, EventName As String, 
 	If StaticButtonImage.IsInitialized Then
 		staticMenuButton.Initialize("menuButton")
 		staticMenuButton.Bitmap = StaticButtonImage
-		staticMenuButton.Gravity = Gravity.FILL
-	
+		staticMenuButton.Gravity = Gravity.FILL	
+		
 		Activity.AddView(staticMenuButton, x - (StaticMenuButtonWidth / 2), y - (StaticMenuButtonHeight / 2), StaticMenuButtonWidth, StaticMenuButtonHeight)
+		staticMenuButton.BringToFront
 	End If
 	
 	If AnimatedButtonImage.IsInitialized Then
@@ -76,8 +77,10 @@ Public Sub Initialize(Activity As Panel, Module As Object, EventName As String, 
 		
 		Activity.AddView(animatedMenuButton, x - (AnimatedMenuButtonWidth / 2), y - (AnimatedMenuButtonHeight / 2), AnimatedMenuButtonWidth, AnimatedMenuButtonHeight)
 		animatedMenuButton.BringToFront
+		
 	End If
-	
+	staticMenuButton.BringToFront
+	animatedMenuButton.BringToFront
 End Sub
 #End Region
 
@@ -125,6 +128,9 @@ Private Sub menuButton_Click
 			For i = MenuItems.Size - 1 To 0 Step -1
 				AnimSet = GetMenuItemAnimation(MenuItems.Get(i), Not(menuOpen))
 				AnimSet.Start(MenuItems.Get(i))
+				Dim a As View
+				a = MenuItems.Get(i)
+				a.BringToFront
 			Next
 		Else
 			If animatedMenuButton.IsInitialized Then Animator.InitializeRotateCenter("menuButtonUnRotate", 0, 45, animatedMenuButton)

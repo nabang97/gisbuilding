@@ -101,4 +101,5 @@ End Sub
 
 Sub BtnSearch_Click
 	StartActivity(SearchBuilding)
+	'StartActivity(LoaderImage)
 End Sub

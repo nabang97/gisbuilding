@@ -20,6 +20,7 @@ Sub Process_Globals
 	nameBuilding=""
 	Dim tipp,tipname,typeoffice,cons,consname,typecons  As String
 	Dim idspin As String
+	Dim latitude , longitude As String
 End Sub
 
 Sub Globals
@@ -66,6 +67,7 @@ Sub Globals
 	Private ToText As EditText
 	Dim radiusku As Int
 	Private Label3 As Label
+	Private BtnMap As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -76,14 +78,23 @@ Sub Activity_Create(FirstTime As Boolean)
 	ScrollView1.Panel.LoadLayout("clvBuildingList")
 	ScrollView1.Color =Colors.White
 	'Title Bar
+	If ManualPosition.lat == 0 Or ManualPosition.lng == 0 Then
+		Msgbox("GPS can't find your location. Try to restart the application or open the application outside the room.","Warning")
+		latitude = -0.3209284
+		longitude = 100.3484996
+	Else
+		latitude = ManualPosition.lat
+		longitude = ManualPosition.lng
+	End If
+	Log("Firsttime : "&lat&","&lng)
 	BackArrow.Visible= False
 	TitleBar.Text="Search Building"
 	TitleBar.Left = 5%x
-	Home.HomeBuilding = "null"
+	Home.HomeBuilding = ""
 	'menambahkan WebView Map
 	WebViewTest.Initialize("")
 	Activity.AddView(WebViewTest,0,6%y,100%x,35%y)
-	WebViewTest.LoadURL("https://acc663a9.ngrok.io/gisbuilding/index.php")
+	WebViewTest.LoadURL(Main.Server&"index.php")
 	
 	'menambahkan PanelSearch View
 	Dim TopSearch As Int
@@ -98,6 +109,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	CreateSpinBuilding_Item
 	SpinSearch.Clear
 	CLV2.AsView.Height = 0
+	
 End Sub
 
 Sub Activity_Resume
@@ -122,11 +134,7 @@ Sub CreateSpinBuilding_Item
 		If Main.kvs.ContainsKey("role") == True Then
 			SpinBuilding.Add("House Building")
 			spinnerMapB.Put("House Building","House")
-		Else
-			
 		End If
-	Else
-		'do nothing
 	End If
 	
 	SpinBuilding.Add("Educational Building")
@@ -464,7 +472,7 @@ Sub JobDone(Job As HttpJob)
 			Case "Worship"
 				Dim worship_array As List
 				worship_array = parser.NextArray
-				If worship_array.Size = 0 Then
+				If worship_array.Size-1 < 0 Then
 					Msgbox("Not Found","Warning")
 					ProgressDialogHide
 				Else
@@ -481,22 +489,21 @@ Sub JobDone(Job As HttpJob)
 					number = a.Get("worship_building_id")
 					nama = a.Get("name_of_worship_building")
 					CLV2.Add(CreateItem(CLV2.AsView.Width, number, nama), "")
-					CLV2.AsView.Height = PanelBuildingList.Height*(i+1)
+					'CLV2.sv.Height = PanelBuildingList.Height*(i+1)
 				Next
 					'Mengatur margin top ScrollView dan CLV
-					CLV2.AsView.Height = PanelBuildingList.Height * worship_array.Size
-					ScrollView1.Top = WebViewTest.Height + WebViewTest.Top + PanelSearch.Height
-					CLV2.AsView.Height = CLV2.AsView.Height + 4%y
-					CLV2.sv.Height = CLV2.AsView.Height
-					ScrollView1.Panel.Height = CLV2.sv.Height
-					ScrollView1.Height = 100%y - (ScrollView1.Top + PanelToolbar.Height)
+					CLV2.sv.Height = (PanelBuildingList.Height+0.5%y) * worship_array.Size
+					ScrollView1.Top = WebViewTest.Height + WebViewTest.Top + PanelSearch.Height					
+					ScrollView1.Height = 100%y - (ScrollView1.Top + PanelToolbar.Height)					
+					CLV2.AsView.Height = CLV2.sv.Height
+					ScrollView1.Panel.Height = CLV2.AsView.Height
 				Log(nama)
 				ProgressDialogHide
 				End If
 			Case "Office"
 				Dim office_array As List
 				office_array = parser.NextArray
-				If office_array.Size = 0 Then
+				If office_array.Size -1 < 0 Then
 					Msgbox("Not Found","Warning")
 					ProgressDialogHide
 				Else
@@ -528,7 +535,7 @@ Sub JobDone(Job As HttpJob)
 			Case "Educational"
 				Dim education_array As List
 				education_array = parser.NextArray
-				If education_array.Size = 0 Then
+				If education_array.Size -1 < 0 Then
 					Msgbox("Not Found","Warning")
 					ProgressDialogHide
 				Else
@@ -560,7 +567,7 @@ Sub JobDone(Job As HttpJob)
 			Case "Health"
 				Dim health_array As List
 				health_array = parser.NextArray
-				If health_array.Size = 0 Then
+				If health_array.Size-1 < 0 Then
 					Msgbox("Not Found","Warning")
 					ProgressDialogHide
 				Else
@@ -592,7 +599,7 @@ Sub JobDone(Job As HttpJob)
 			Case "Msme"
 				Dim msme_array As List
 				msme_array = parser.NextArray
-				If msme_array.Size = 0 Then
+				If msme_array.Size-1 < 0 Then
 					Msgbox("Not Found","Warning")
 					ProgressDialogHide
 				Else
@@ -621,11 +628,10 @@ Sub JobDone(Job As HttpJob)
 					Log(nama)
 					ProgressDialogHide
 				End If
-			Case "House"
-				
+			Case "House"				
 				Dim house_array As List
 				house_array = parser.NextArray
-				If house_array.Size = 0 Then
+				If house_array.Size-1 < 0 Then
 					Msgbox("Not Found","Warning")
 					ProgressDialogHide
 				Else
@@ -645,12 +651,11 @@ Sub JobDone(Job As HttpJob)
 						
 					Next
 					'Mengatur margin top ScrollView dan CLV
-					CLV2.AsView.Height = PanelBuildingList.Height * house_array.Size
+					CLV2.sv.Height = (PanelBuildingList.Height + 0.2%y) * house_array.Size
 					ScrollView1.Top = WebViewTest.Height + WebViewTest.Top + PanelSearch.Height
-					CLV2.AsView.Height = CLV2.AsView.Height + 4%y
-					CLV2.sv.Height = CLV2.AsView.Height
-					ScrollView1.Panel.Height = CLV2.sv.Height
 					ScrollView1.Height = 100%y - (ScrollView1.Top + PanelToolbar.Height)
+					CLV2.AsView.Height = CLV2.sv.Height
+					ScrollView1.Panel.Height = CLV2.AsView.Height
 					Log(nama)
 					ProgressDialogHide
 				End If
@@ -716,39 +721,46 @@ Sub SearchBtn_Click
 					Else If SearchText.Text == "" And idspin == "" And typesrc == "" Then
 						Msgbox("Please complete all fields!","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM worship_building WHERE upper(name_of_worship_building) like '%"&SearchText.Text.ToUpperCase&"%' ORDER BY name_of_worship_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&SearchText.Text)
+						ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM worship_building WHERE upper(name_of_worship_building) like '%"&SearchText.Text.ToUpperCase&"%' ORDER BY name_of_worship_building",idspin)
+						
 					End If
 				Case "type"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
+						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 						ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM worship_building WHERE type_of_worship = '"&typeid&"' order by name_of_worship_building",idspin)
-						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						
 					End If
 				Case "jorong"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
+						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 						ExecuteRemoteQuery("SELECT W.worship_building_id, W.name_of_worship_building, W.geom, ST_X(ST_CENTROID(W.geom)) As longitude, ST_Y(ST_CENTROID(W.geom)) As latitude	FROM worship_building As W, jorong As J	WHERE ST_CONTAINS(J.geom, W.geom) And J.jorong_id='"&typeid&"'",idspin)
-						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
-					End If
+					End If	
 				Case "construction"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
+						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 						ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM worship_building WHERE type_of_construction = '"&typeid&"' order by name_of_worship_building",idspin)
-						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 					End If
 				Case "facility"
+					  WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&idCheckSub)
 						ExecuteRemoteQuery("SELECT M.worship_building_id, M.name_of_worship_building, ST_X(ST_Centroid(M.geom)) AS lng, ST_Y(ST_CENTROID(M.geom)) AS lat FROM worship_building As M	JOIN detail_worship_building_facilities As F on M.worship_building_id=F.worship_building_id	WHERE F.facility_id IN ("&idCheckSub&") GROUP BY F.worship_building_id, M.worship_building_id, M.name_of_worship_building HAVING COUNT(*) = "&count&"",idspin)
 				Case "land area"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?awal="&FromText.Text&"&akhir="&ToText.Text)
 					ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM worship_building WHERE land_area BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_worship_building",idspin)
 				Case "building area"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?awal="&FromText.Text&"&akhir="&ToText.Text)
 					ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM worship_building WHERE building_area BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_worship_building",idspin)
 				Case "radius"
-					ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak	FROM worship_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/index_"&typesrc&".php?lat="&latitude&"&lng="&longitude&"&rad="&radiusku)
+					ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1), geom) as jarak	FROM worship_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
 				Case "standing year"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?awal="&FromText.Text&"&akhir="&ToText.Text)
 					ExecuteRemoteQuery("SELECT worship_building_id, name_of_worship_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM worship_building WHERE standing_year BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_worship_building",idspin)
 			End Select
 		Case "Office"
@@ -770,26 +782,34 @@ Sub SearchBtn_Click
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT office_building_id, name_of_office_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM office_building WHERE type_of_office = '"&typeid&"' order by name_of_office_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT office_building_id, name_of_office_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM office_building WHERE type_of_office = '"&typeid&"' order by name_of_office_building",idspin)
+						
 					End If
 				Case "jorong"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT O.office_building_id, O.name_of_office_building, O.geom,	ST_X(ST_CENTROID(O.geom)) As longitude, ST_Y(ST_CENTROID(O.geom)) As latitude FROM office_building As O, jorong As J WHERE ST_CONTAINS(J.geom, O.geom) And J.jorong_id='"&typeid&"'",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT O.office_building_id, O.name_of_office_building, O.geom,	ST_X(ST_CENTROID(O.geom)) As longitude, ST_Y(ST_CENTROID(O.geom)) As latitude FROM office_building As O, jorong As J WHERE ST_CONTAINS(J.geom, O.geom) And J.jorong_id='"&typeid&"'",idspin)
+						
 					End If
 				Case "construction"
-					ExecuteRemoteQuery("SELECT office_building_id, name_of_office_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM office_building WHERE type_of_construction = '"&typeid&"' order by name_of_office_building",idspin)
 					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+					ExecuteRemoteQuery("SELECT office_building_id, name_of_office_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM office_building WHERE type_of_construction = '"&typeid&"' order by name_of_office_building",idspin)
+					
 				Case "facility"	
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&idCheckSub)
 						ExecuteRemoteQuery("SELECT O.office_building_id, O.name_of_office_building, ST_X(ST_Centroid(O.geom)) AS lng, ST_Y(ST_CENTROID(O.geom)) AS lat FROM office_building As O JOIN detail_office_building_facilities As F on O.office_building_id=F.office_building_id WHERE F.facility_id IN ("&idCheckSub&") GROUP BY F.office_building_id, O.office_building_id, O.name_of_office_building HAVING COUNT(*) = "&count&"",idspin)	
 				Case "radius"
 					If Main.kvs.ContainsKey("Lat") == False And Main.kvs.ContainsKey("Long") == False Then
 						Msgbox("Your location haven't been set","Error Message")
 					Else
-					ExecuteRemoteQuery("SELECT office_building_id, name_of_office_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak FROM office_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1),	geom) <= "&radiusku&" ORDER BY jarak",idspin)
+'						Dim lbla, lblo As String
+'						Main.lblLat = "-0.9345308"
+'						Main.lblLon = "100.4315281"
+						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/index_"&typesrc&".php?lat="&latitude&"&lng="&longitude&"&rad="&radiusku)
+						ExecuteRemoteQuery("SELECT office_building_id, name_of_office_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1), geom) as jarak FROM office_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1),	geom) <= "&radiusku&" ORDER BY jarak",idspin)
 					End If
 			End Select
 			
@@ -805,37 +825,42 @@ Sub SearchBtn_Click
 					Else If SearchText.Text == "" And idspin == "" And typesrc == "" Then
 						Msgbox("Please complete all fields!","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM health_building WHERE name_of_health_building like '%"&SearchText.Text.ToUpperCase&"%' ORDER BY name_of_health_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM health_building WHERE name_of_health_building like '%"&SearchText.Text.ToUpperCase&"%' ORDER BY name_of_health_building",idspin)
+						
 					End If
 				Case "type"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM health_building WHERE type_of_health_building = '"&typeid&"' order by name_of_health_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM health_building WHERE type_of_health_building = '"&typeid&"' order by name_of_health_building",idspin)
+						
 					End If
 				Case "jorong"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT W.health_building_id, W.name_of_health_building, W.geom, ST_X(ST_CENTROID(W.geom)) As longitude,	ST_Y(ST_CENTROID(W.geom)) As latitude FROM health_building As W, jorong As J WHERE ST_CONTAINS(J.geom, W.geom) And J.jorong_id='"&typeid&"'",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT W.health_building_id, W.name_of_health_building, W.geom, ST_X(ST_CENTROID(W.geom)) As longitude,	ST_Y(ST_CENTROID(W.geom)) As latitude FROM health_building As W, jorong As J WHERE ST_CONTAINS(J.geom, W.geom) And J.jorong_id='"&typeid&"'",idspin)
+						
 					End If
 				Case "construction"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM health_building WHERE type_of_construction = '"&typeid&"' order by name_of_health_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM health_building WHERE type_of_construction = '"&typeid&"' order by name_of_health_building",idspin)					
 					End If
 				Case "facility"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&idCheckSub)
 						ExecuteRemoteQuery("SELECT H.health_building_id, H.name_of_health_building, ST_X(ST_Centroid(H.geom)) AS lng, ST_Y(ST_CENTROID(H.geom)) AS lat FROM health_building As H JOIN detail_health_building_facilities As F on H.health_building_id=F.health_building_id WHERE F.facility_id IN ("&idCheckSub&") GROUP BY F.health_building_id, H.health_building_id, H.name_of_health_building HAVING COUNT(*) = "&count&"",idspin)
 				Case "radius"
 					If Main.kvs.ContainsKey("Lat") == False And Main.kvs.ContainsKey("Long") == False Then
 						Msgbox("Your location haven't been set","Error Message")
 					Else
-					ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat,	ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak FROM health_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1),	geom) <= "&radiusku&" ORDER BY jarak",idspin)
+						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/index_"&typesrc&".php?lat="&latitude&"&lng="&longitude&"&rad="&radiusku)
+						ExecuteRemoteQuery("SELECT health_building_id, name_of_health_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat,	ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1), geom) as jarak FROM health_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1),	geom) <= "&radiusku&" ORDER BY jarak",idspin)
 					End If
 			End Select
 			
@@ -851,41 +876,49 @@ Sub SearchBtn_Click
 					Else If SearchText.Text == "" And idspin == "" And typesrc == "" Then
 						Msgbox("Please complete all fields!","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM educational_building WHERE name_of_educational_building like '%"&SearchText.Text.ToUpperCase&"%' ORDER BY name_of_educational_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM educational_building WHERE name_of_educational_building like '%"&SearchText.Text.ToUpperCase&"%' ORDER BY name_of_educational_building",idspin)
+						
 					End If
 				Case "type"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building, ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM educational_building WHERE id_level_of_education = '"&typeid&"' order by name_of_educational_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building, ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM educational_building WHERE id_level_of_education = '"&typeid&"' order by name_of_educational_building",idspin)
+						
 					End If
 				Case "jorong"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT W.educational_building_id, W.name_of_educational_building, W.geom, ST_X(ST_CENTROID(W.geom)) As longitude, ST_Y(ST_CENTROID(W.geom)) As latitude FROM educational_building As W, jorong As J WHERE ST_CONTAINS(J.geom, W.geom) And J.jorong_id='"&typeid&"'",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT W.educational_building_id, W.name_of_educational_building, W.geom, ST_X(ST_CENTROID(W.geom)) As longitude, ST_Y(ST_CENTROID(W.geom)) As latitude FROM educational_building As W, jorong As J WHERE ST_CONTAINS(J.geom, W.geom) And J.jorong_id='"&typeid&"'",idspin)
+						
 					End If	
 				Case "status"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("Select educational_building_id, name_of_educational_building, ST_X(ST_Centroid(geom)) As longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM educational_building WHERE school_type = '"&typeid&"' order by name_of_educational_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("Select educational_building_id, name_of_educational_building, ST_X(ST_Centroid(geom)) As longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM educational_building WHERE school_type = '"&typeid&"' order by name_of_educational_building",idspin)
+						
 					End If
 				Case "facility"	
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&idCheckSub)
 						ExecuteRemoteQuery("SELECT E.educational_building_id, E.name_of_educational_building, ST_X(ST_Centroid(E.geom)) AS lng, ST_Y(ST_CENTROID(E.geom)) AS lat FROM educational_building As E JOIN detail_educational_building_facilities As F on E.educational_building_id=F.educational_building_id	WHERE F.facility_id IN ("&idCheckSub&") GROUP BY F.educational_building_id, E.educational_building_id, E.name_of_educational_building HAVING COUNT(*) = "&count&"",idspin)
 				Case "land area"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?awal="&FromText.Text&"&akhir="&ToText.Text)
 					ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM educational_building WHERE land_area BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_educational_building",idspin)
 				Case "building area"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?awal="&FromText.Text&"&akhir="&ToText.Text)
 					ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM educational_building WHERE building_area BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_educational_building",idspin)
 				Case "radius"
 					If Main.kvs.ContainsKey("Lat") == False And Main.kvs.ContainsKey("Long") == False Then
 						Msgbox("Your location haven't been set","Error Message")
 					Else
-					ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak	FROM educational_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
+						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/index_"&typesrc&".php?lat="&latitude&"&lng="&longitude&"&rad="&radiusku)
+						ExecuteRemoteQuery("SELECT educational_building_id, name_of_educational_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat, ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1), geom) as jarak	FROM educational_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
 					End If
 			End Select
 			
@@ -901,39 +934,46 @@ Sub SearchBtn_Click
 					Else If SearchText.Text == "" And idspin == "" And typesrc == "" Then
 						Msgbox("Please complete all fields!","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM msme_building WHERE upper(name_of_msme_building) like '%"&SearchText.Text.ToUpperCase&"%' order by name_of_msme_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM msme_building WHERE upper(name_of_msme_building) like '%"&SearchText.Text.ToUpperCase&"%' order by name_of_msme_building",idspin)
+						
 					End If
 				Case "type"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM msme_building WHERE type_of_msme = '"&typeid&"' order by name_of_msme_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM msme_building WHERE type_of_msme = '"&typeid&"' order by name_of_msme_building",idspin)
+						
 					End If
 				Case "jorong"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT M.msme_building_id, M.name_of_msme_building, M.geom, ST_X(ST_CENTROID(M.geom)) As longitude, ST_Y(ST_CENTROID(M.geom)) As latitude FROM msme_building As M, jorong As J WHERE ST_CONTAINS(J.geom, M.geom) And J.jorong_id='"&typeid&"'",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT M.msme_building_id, M.name_of_msme_building, M.geom, ST_X(ST_CENTROID(M.geom)) As longitude, ST_Y(ST_CENTROID(M.geom)) As latitude FROM msme_building As M, jorong As J WHERE ST_CONTAINS(J.geom, M.geom) And J.jorong_id='"&typeid&"'",idspin)
+						
 					End If
 				Case "construction"
 					If SpinType.SelectedIndex == 0 Then
 						Msgbox("Please select type of educational building","Warning")
 					Else
-						ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM msme_building WHERE type_of_construction = '"&typeid&"' order by name_of_msme_building",idspin)
 						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
+						ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM msme_building WHERE type_of_construction = '"&typeid&"' order by name_of_msme_building",idspin)
+						
 					End If
 				Case "facility"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&idCheckSub)
 						ExecuteRemoteQuery("Select M.msme_building_id, M.name_of_msme_building, ST_X(ST_Centroid(M.geom)) As lng, ST_Y(ST_CENTROID(M.geom)) As lat FROM msme_building As M JOIN detail_msme_building_facilities As F on M.msme_building_id=F.msme_building_id WHERE F.facility_id IN ("&idCheckSub&") GROUP BY F.msme_building_id, M.msme_building_id, M.name_of_msme_building HAVING COUNT(*) = "&count&"",idspin)
 				Case "radius"
 					If Main.kvs.ContainsKey("Lat") == False And Main.kvs.ContainsKey("Long") == False Then
 						Msgbox("Your location haven't been set","Error Message")
 					Else
-					ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat,	ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) as jarak FROM msme_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&Main.lblLon&" "&Main.lblLat&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
+						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/index_"&typesrc&".php?lat="&latitude&"&lng="&longitude&"&rad="&radiusku)
+						ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_CENTROID(geom)) as lon, ST_Y(ST_CENTROID(geom)) as lat,	ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1), geom) as jarak FROM msme_building where ST_DISTANCE_SPHERE(ST_GeomFromText('POINT("&longitude&" "&latitude&")',-1), geom) <= "&radiusku&" ORDER BY jarak",idspin)
 					End If
 				Case "income"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?awal="&FromText.Text&"&akhir="&ToText.Text)
 					ExecuteRemoteQuery("SELECT msme_building_id, name_of_msme_building ,ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) AS latitude FROM msme_building WHERE monthly_income BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY name_of_msme_building",idspin)
 			End Select
 			
@@ -949,35 +989,49 @@ Sub SearchBtn_Click
 					Else If SearchText.Text == "" And idspin == "" And typesrc == "" Then
 						Msgbox("Please complete all fields!","Warning")
 					Else
+						WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&SearchText.Text)
 						ExecuteRemoteQuery("SELECT house_building_id, fcn_owner, ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM house_building WHERE upper(house_building_id) like '%"&SearchText.Text.ToUpperCase&"%' ORDER BY house_building_id",idspin)
 					End If
 				Case "owner"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&SearchText.Text)
 					ExecuteRemoteQuery("SELECT H.house_building_id, fcn_owner, ST_X(ST_Centroid(H.geom)) AS longitude, ST_Y(ST_CENTROID(H.geom)) AS latitude FROM house_building As H JOIN house_building_owner As O ON H.fcn_owner=O.national_identity_number	WHERE upper(O.owner_name) LIKE'%"&SearchText.Text.ToUpperCase&"%' ORDER BY house_building_id",idspin)
 				Case "occupant"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&SearchText.Text)
 					ExecuteRemoteQuery("SELECT H.house_building_id, fcn_owner, ST_X(ST_Centroid(H.geom)) AS longitude, ST_Y(ST_CENTROID(H.geom)) AS latitude FROM house_building As H JOIN householder As O ON H.house_building_id=O.house_building_id	WHERE upper(O.head_of_family) LIKE '%"&SearchText.Text.ToUpperCase&"%' ORDER BY house_building_id",idspin)
 				Case "fcn owner"
 					Msgbox("Query belum ada", "WARNING")
 				Case "fcn occupant"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?fcn="&SearchText.Text)
 					ExecuteRemoteQuery("SELECT H.house_building_id, fcn_owner, ST_X(ST_Centroid(H.geom)) AS longitude, ST_Y(ST_CENTROID(H.geom)) AS latitude FROM house_building As H JOIN householder As O ON H.house_building_id=O.house_building_id WHERE upper(O.family_card_number) LIKE '%"&SearchText.Text.ToUpperCase&"%' ORDER BY house_building_id",idspin)
 				Case "income"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?awal="&FromText.Text&"&akhir="&ToText.Text)
 					ExecuteRemoteQuery("SELECT H.house_building_id, fcn_owner, ST_X(ST_Centroid(H.geom)) AS longitude, ST_Y(ST_CENTROID(H.geom)) AS latitude FROM house_building As H JOIN householder As O ON H.house_building_id=O.house_building_id	WHERE income BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY house_building_id",idspin)
 				Case "tribe"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 					ExecuteRemoteQuery("SELECT H.house_building_id, fcn_owner, ST_X(ST_Centroid(H.geom)) AS longitude, ST_Y(ST_CENTROID(H.geom)) AS latitude FROM house_building As H JOIN householder As O ON H.house_building_id=O.house_building_id JOIN datuk As D ON O.datuk_id=D.datuk_id JOIN tribe As T ON D.tribe_id=T.tribe_id WHERE D.tribe_id = "&typeid&" ORDER BY house_building_id",idspin)
 				Case "village"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 					ExecuteRemoteQuery("SELECT H.house_building_id, fcn_owner, ST_X(ST_Centroid(H.geom)) AS longitude, ST_Y(ST_CENTROID(H.geom)) AS latitude FROM house_building As H JOIN householder As O ON H.house_building_id=O.house_building_id WHERE village_id = "&typeid&" ORDER BY house_building_id",idspin)
 				Case "datuk"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 					ExecuteRemoteQuery("SELECT H.house_building_id, fcn_owner, ST_X(ST_Centroid(H.geom)) AS longitude, ST_Y(ST_CENTROID(H.geom)) AS latitude FROM house_building As H JOIN householder As O ON H.house_building_id=O.house_building_id	WHERE datuk_id = "&typeid&" ORDER BY house_building_id",idspin)
 				Case "construction"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 					ExecuteRemoteQuery("SELECT house_building_id, fcn_owner, ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) AS latitude	FROM house_building WHERE type_of_construction = "&typeid&" ORDER BY house_building_id",idspin)
 				Case "standing year"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?awal="&FromText.Text&"&akhir="&ToText.Text)
 					ExecuteRemoteQuery("SELECT house_building_id, fcn_owner, ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude FROM house_building WHERE standing_year BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY house_building_id",idspin)
 				Case "electric capacity"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?awal="&FromText.Text&"&akhir="&ToText.Text)
 					ExecuteRemoteQuery("SELECT house_building_id, fcn_owner, ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) AS latitude	FROM house_building WHERE electricity_capacity BETWEEN "&FromText.Text&" AND "&ToText.Text&" ORDER BY house_building_id",idspin)
 				Case "empty"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php")
 					ExecuteRemoteQuery("SELECT house_building_id, fcn_owner, ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) As latitude	FROM house_building WHERE building_status=0",idspin)
 				Case "inhabited"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php")
 					ExecuteRemoteQuery("SELECT house_building_id, fcn_owner, ST_X(ST_Centroid(geom)) AS longitude, ST_Y(ST_CENTROID(geom)) AS latitude FROM house_building WHERE building_status=1",idspin)
 				Case "education"
+					WebViewTest.LoadUrl(""&Main.ServerMap&""&idspin&"/search_"&typesrc&".php?"&typesrc&"="&typeid)
 					ExecuteRemoteQuery("SELECT H.house_building_id, ST_X(ST_Centroid(H.geom)) AS longitude, ST_Y(ST_CENTROID(H.geom)) AS latitude FROM house_building As H JOIN householder As O ON H.house_building_id=O.house_building_id	WHERE educational_id = "&typeid&" ORDER BY house_building_id",idspin)
 			End Select
 			
@@ -990,7 +1044,15 @@ Sub BtnSearch_Click
 End Sub
 
 Sub BtnHome_Click
-	StartActivity(Home)
+	If File.Exists(File.DirInternal,"datastore") Then
+		If Main.kvs.ContainsKey("role") == True Then
+			StartActivity(HomeAdmin)
+		Else
+			StartActivity(Home)
+		End If
+	Else
+		StartActivity(Home)
+	End If
 End Sub
 
 Sub SpinBuilding_ItemClick (Position As Int, Value As Object)
@@ -1265,4 +1327,8 @@ Sub SearchRadius_ValueChanged (Value As Int, UserChanged As Boolean)
 	End If
 	Label3.Text = Value&" m"
 	Log(radiusku)
+End Sub
+
+Sub BtnMap_Click
+	StartActivity(ManualPosition)
 End Sub

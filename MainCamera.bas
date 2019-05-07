@@ -17,6 +17,7 @@ Sub Process_Globals
 	Private VideoFileDir, VideoFileName As String
 	Private MyTaskIndex As Int
 	Private rp As RuntimePermissions
+	Dim namefile As String
 End Sub
 
 Sub Globals
@@ -38,18 +39,80 @@ Sub Globals
 	Private btnCamera As Button
 	Private barZoom As SeekBar
 	Private SaveImgBtn As Button
-	Private CancelSaveBtn As Button
+	Private CancelSaveBtn As Button	
+	
+	Dim idBuilding As String
+	Dim buildingtype As String
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
-	VideoFileDir = rp.GetSafeDirDefaultExternal("")
-	VideoFileName = "1.mp4"
+	
+	VideoFileDir = rp.GetSafeDirDefaultExternal("temp")
 	Activity.LoadLayout("1")
 	Activity.LoadLayout("StillPicture")
 	cam.Initialize(pnlCamera)
 	Log(cam.SupportedHardwareLevel)
 	buttons = Array(btnScene, btnAutoExposure, btnEffects, btnFocus, btnMode)
 	SetState(False, False, VideoMode)
+	
+	If Home.HomeBuilding.Length > 0 Then
+		Log(Home.HomeBuilding)
+		Select Home.HomeBuilding
+			Case "Worship"
+				If WorshipBuilding.idBuilding.Length > 0 Then
+					idBuilding= WorshipBuilding.idBuilding
+					Log(idBuilding)
+				Else
+					Msgbox("Can't get the ID","Error Message")
+					Activity.Finish
+				End If
+			Case "Office"
+				If OfficeBuilding.idBuilding.Length > 0 Then
+					idBuilding= OfficeBuilding.idBuilding
+					Log(idBuilding)
+				Else
+					Msgbox("Can't get the ID","Error Message")
+					Activity.Finish
+				End If
+			Case "Health"
+				If HealthBuilding.idBuilding.Length > 0 Then
+					idBuilding= HealthBuilding.idBuilding
+					Log(idBuilding)
+				Else
+					Msgbox("Can't get the ID","Error Message")
+					Activity.Finish
+				End If
+			Case "Msme"
+				If MsmeBuilding.idBuilding.Length > 0 Then
+					idBuilding= MsmeBuilding.idBuilding
+					Log(idBuilding)
+				Else
+					Msgbox("Can't get the ID","Error Message")
+					Activity.Finish
+				End If
+			Case "Educational"
+				If EducationalBuilding.idBuilding.Length > 0 Then
+					idBuilding= EducationalBuilding.idBuilding
+					Log(idBuilding)
+				Else
+					Msgbox("Can't get the ID","Error Message")
+					Activity.Finish
+				End If
+			Case Else
+				Msgbox("Can't get the ID","Error Message")
+				Activity.Finish
+		End Select
+	Else If SearchBuilding.idspin.Length > 0 Then
+		buildingtype = SearchBuilding.idspin
+		Log(buildingtype)
+		If SearchBuilding.idBuilding.Length > 0 Then
+			idBuilding = SearchBuilding.idBuilding
+			Log(idBuilding)
+		Else
+			Msgbox("Can't get the ID","Error Message")
+			Activity.Finish
+		End If
+	End If
 End Sub
 
 Sub Activity_Resume
@@ -250,11 +313,14 @@ End Sub
 Sub SaveImgBtn_Click
 	Wait For(cam.FocusAndTakePicture(MyTaskIndex)) Complete (data() As Byte)
 	Dim tanggal As String
-	DateTime.DateFormat="dd-mm-yyyy hh:mm:ss.s"
+	DateTime.DateFormat="ddmmyyy-hhmmss"
 	tanggal = DateTime.Date(DateTime.now)
-	cam.DataToFile(data, VideoFileDir, tanggal&".jpg")
+	namefile = idBuilding&"-"&tanggal&".jpg"
+	cam.DataToFile(data, VideoFileDir,namefile)
+	'Dim bmp As Bitmap = cam.DataToBitmap(data)
 	ToastMessageShow("Image Saved!",True)
 	pnlBackground.Visible = False
+	CallSubDelayed2(AddPhoto,"ShowPicture",namefile)
 End Sub
 
 Sub CancelSaveBtn_Click

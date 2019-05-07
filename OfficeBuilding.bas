@@ -49,7 +49,7 @@ Sub Activity_Create(FirstTime As Boolean)
 	'menambahkan WebView Map
 	WebViewTest.Initialize("")
 	Activity.AddView(WebViewTest,0,6%y,100%x,50%y)
-	WebViewTest.LoadURL("https://gisbuildingkotogadang.herokuapp.com/office_building.php")
+	WebViewTest.LoadURL(Main.Server&"office_building.php")
 	
 	'Mengatur margin top ScrollView dan CLV
 	ScrollView1.Panel.Height = CLV2.sv.Height

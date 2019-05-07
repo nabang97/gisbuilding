@@ -128,7 +128,6 @@ Sub Btnlogin_Click
 	Dim md As MessageDigest
 	Dim ByteCon As ByteConverter
 	Dim passwordhash() As Byte
-	Dim passwordhash2() As Byte
 	passwordhash = md.GetMessageDigest(pi.GetBytes("UTF8"),"MD5")
 	md5string = ByteCon.HexFromBytes(passwordhash)
 	md5string = md5string.ToLowerCase

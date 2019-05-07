@@ -32,6 +32,7 @@ Sub Globals
 	Private BtnSearch As Button
 	Private PanelBar As Panel
 	Private PanelToolBar As Panel
+	Private BtnMap As Button
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -73,6 +74,7 @@ Sub SetAnimation(InAnimation As String, OutAnimation As String)
 End Sub
 
 Sub OfficeHome_Click()
+	SearchBuilding.idspin =""
 	OfficeHome.SetBackgroundImage(LoadBitmap(File.DirAssets,"office-pres.png"))
 	HomeBuilding = "Office"
 	StartActivity(OfficeBuilding)
@@ -80,12 +82,14 @@ Sub OfficeHome_Click()
 End Sub
 
 Sub WorshipHome_Click
+	SearchBuilding.idspin =""
 	HomeBuilding = "Worship"
 	StartActivity(WorshipBuilding)
 	SetAnimation("zoom_enter", "zoom_exit")
 End Sub
 
 Sub HealthHome_Click
+	SearchBuilding.idspin =""
 	HomeBuilding = "Health"
 	StartActivity(HealthBuilding)
 	SetAnimation("zoom_enter", "zoom_exit")
@@ -93,12 +97,14 @@ End Sub
 
 
 Sub EducationalHome_Click
+	SearchBuilding.idspin =""
 	HomeBuilding = "Educational"
 	StartActivity(EducationalBuilding)
 	SetAnimation("zoom_enter", "zoom_exit")
 End Sub
 
 Sub MsmeHome_Click
+	SearchBuilding.idspin =""
 	HomeBuilding = "Msme"
 	StartActivity(MsmeBuilding)
 	SetAnimation("zoom_enter", "zoom_exit")
@@ -112,4 +118,8 @@ End Sub
 
 Sub BtnSearch_Click
 	StartActivity(SearchBuilding)
+End Sub
+
+Sub BtnMap_Click
+	StartActivity(ManualPosition)
 End Sub

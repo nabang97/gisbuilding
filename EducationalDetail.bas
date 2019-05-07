@@ -14,11 +14,19 @@ Sub Process_Globals
 	'These variables can be accessed from all modules.
 	Private xui As XUI
 	Dim lat, lng As String 
+	Private links As List
 End Sub
 
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
+	Dim ScrollImage As ScrollView
+	
+	Dim clv As CustomListView
+	Dim Label1 As Label
+	Dim ImageView1 As ImageView
+	Dim ImageViews As List
+	
 	Dim menu As ArcMenu
 	Dim menuButtonStatic, menuButtonAnimated As Bitmap
 	Private CLV1 As CustomListView
@@ -57,16 +65,17 @@ Sub Globals
 	Private editBtn As Button
 	Private editFacility As Button
 	Private PanelGallery As Panel
+	
+	Private AddPicture As Button
+	AddPicture.Initialize("AddPicture")
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Set Layout
 	Activity.LoadLayout("MainScrollView")
 	ScrollView1.Panel.LoadLayout("EducationalDetail")
-	ScrollView1.Height=100%y
-	ScrollView1.Panel.Height = PanelBuildingList.Height
 	PanelToolbar.Visible = False
-	
+	ScrollView1.Height = 100%y - ScrollView1.Top
 	TabHost1.AddTab("Map","tabMap")
 	TabHost1.AddTab("Detail","Educational_tabDetail")
 	TabHost1.AddTab("Gallery","tabGallery")
@@ -97,14 +106,21 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Activity_Resume
-	CLV1.Clear
+	CLV1.Clear	
 	ProgressDialogShow("Loading...")
-	ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id ='"&ids&"'","FASILITAS")
-	ExecuteRemoteQuery("SELECT E.educational_building_id, E.name_of_educational_building, E.building_area, E.land_area, E.parking_area, E.standing_year, E.electricity_capacity, E.address, E.type_of_construction, E.id_level_of_education, E.headmaster_name, E.total_students, E.total_teachers, E.school_type,ST_X(ST_Centroid(E.geom)) As longitude, ST_Y(ST_CENTROID(E.geom)) As latitude, T.name_of_type As constr, L.name_of_level As levels, ST_AsText(geom) As geom FROM educational_building As E	LEFT JOIN type_of_construction As T ON E.type_of_construction=T.type_id	LEFT JOIN level_of_education As L ON E.id_level_of_education=L.level_id	WHERE E.educational_building_id='"&ids&"'","DATA")
+	If TabHost1.CurrentTab == 2 Then
+		clv.Clear
+		ExecuteRemoteQuery("SELECT photo_url, upload_date FROM educational_building_gallery WHERE educational_building_id='"&ids&"'","Download")
+	Else
+		ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id ='"&ids&"'","FASILITAS")
+		ExecuteRemoteQuery("SELECT E.educational_building_id, E.name_of_educational_building, E.building_area, E.land_area, E.parking_area, E.standing_year, E.electricity_capacity, E.address, E.type_of_construction, E.id_level_of_education, E.headmaster_name, E.total_students, E.total_teachers, E.school_type,ST_X(ST_Centroid(E.geom)) As longitude, ST_Y(ST_CENTROID(E.geom)) As latitude, T.name_of_type As constr, L.name_of_level As levels, ST_AsText(geom) As geom FROM educational_building As E	LEFT JOIN type_of_construction As T ON E.type_of_construction=T.type_id	LEFT JOIN level_of_education As L ON E.id_level_of_education=L.level_id	WHERE E.educational_building_id='"&ids&"'","DATA")
+	End If
+	
+	
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
-
+	CallSub(Starter, "ActivityIsPaused")
 End Sub
 
 Private Sub CreateItem(Width As Int, Title As String, Content As String) As Panel
@@ -130,9 +146,70 @@ Sub JobDone(Job As HttpJob)
 		Dim parser As JSONParser 'mengambil data dalam bentuk json menjadi array
 		parser.Initialize(res)
 		Select Job.JobName
+			Case "Download"
+'			ResetImagesBackground				
+				Dim agn As List
+				agn=parser.NextArray
+				If agn.Size - 1 < 0 Then
+					Log(agn.Size)
+					Dim NotFound As Label
+					NotFound.Initialize("")
+					PanelGallery.Color= Colors.White
+					PanelGallery.AddView(NotFound,0,0,100%x,70%y)
+					NotFound.Text = "Picture doesn't exist"
+					NotFound.TextSize = 15
+					NotFound.Gravity = Gravity.CENTER
+					PanelGallery.Height = NotFound.Height
+					TabHost1.Height = PanelGallery.Height
+					Msgbox("Galery Foto tidak ditemukan", "Peringatan")
+				Else
+					ScrollImage.Initialize(100%y)
+					PanelGallery.AddView(ScrollImage,0,0,100%x,100%y)					
+					ScrollImage.Panel.LoadLayout("LoaderImage")
+					For i=0 To agn.Size-1
+						Dim w As Map
+						w=agn.Get(i)
+						Dim image = w.Get("photo_url") As String
+						Dim gambar = ""&Main.Server&"Files/Educational/img/"&image As String
+						Dim m As Map
+						m.Initialize
+						Dim p As Panel
+						p.Initialize("")
+						p.SetLayout(0,0,100%x,20%y)
+						p.LoadLayout("listitem-image")
+						clv.Add(p,m)
+						m.Put(ImageView1, gambar)
+						Log (gambar)
+						CallSubDelayed2(Starter, "Download", m)
+					Next
+					ScrollView1.Height = 100%y - ScrollView1.Top
+					ScrollImage.Panel.Height = (ImageView1.Height+3%y) * agn.Size
+					ScrollImage.Height = 70%y
+					PanelGallery.Height = ScrollImage.Height
+					TabHost1.Height = ScrollImage.Height
+				End If				
+				AddPicture.RemoveView
+				PanelBuildingList.AddView(AddPicture,0, TabHost1.Height + TabHost1.Top, 100%x, 10%y)
+				PanelBuildingList.Height = AddPicture.Top + AddPicture.Height
+				ScrollView1.Panel.Height = PanelBuildingList.Height
+				ProgressDialogHide
+	
 			Case "FASILITAS"
 				Dim fasilitas_array As List
 				fasilitas_array = parser.NextArray
+				If fasilitas_array.Size-1 < 0 Then
+					CLV1.AsView.Visible= False
+					Dim NotExist As Label
+					NotExist.Initialize("")
+					PFacility.AddView(NotExist,LblFacility.Left,0,LblFacility.Width,30%y)
+					NotExist.Gravity= Gravity.CENTER
+					NotExist.Text="Facility doesn't not exist."
+					Select TabHost1.CurrentTab
+						Case 1
+							PFacility.Height= NotExist.Height + NotExist.Top
+							TabHost1.Height = PFacility.Top+PFacility.Height
+					End Select
+				Else
 				For i=0 To fasilitas_array.Size - 1
 					Dim a As Map
 					a = fasilitas_array.Get(i)
@@ -149,16 +226,10 @@ Sub JobDone(Job As HttpJob)
 				Select TabHost1.CurrentTab
 					Case 1
 						TabHost1.Height = PFacility.Top+PFacility.Height + 10%y
-				End Select
-				
+				End Select		
+				End If
 				PanelBuildingList.Height = TabHost1.Height + TabHost1.Top + 2%y
-				ScrollView1.Panel.Height = PanelBuildingList.Height + 10%y
-'				If PanelBuildingList.Height <= 93%y Then
-'					PanelBuildingList.Height = 93%y
-'					ScrollView1.Panel.Height = PanelBuildingList.Height
-'				Else
-'					ScrollView1.Panel.Height = PanelBuildingList.Height
-'				End If 
+				ScrollView1.Panel.Height = PanelBuildingList.Height
 				Log(content)
 				ProgressDialogHide
 				
@@ -196,62 +267,53 @@ Sub JobDone(Job As HttpJob)
 	Job.Release
 End Sub
 
+Sub AddPicture_Click
+	ToastMessageShow("Add photo",True)
+	StartActivity(AddPhoto)
+End Sub
+
 Sub TabHost1_TabChanged
 	
 	Select TabHost1.CurrentTab
 		Case 0
-			WebViewRoute.LoadUrl("https://www.google.com/maps/@-0.8206655,100.3217247,15z")
+			WebViewRoute.LoadUrl(Main.Server&"Educational/Route.php?lat="&Main.lblLat&"&lng="&Main.lblLon&"&latd="&lat&"&lngd="&lng)
 			Msgbox("Current tab is " & TabHost1.CurrentTab, "")
 			Log ("Button Top :"&btnRoute.Top)
-			TabHost1.Height = btnRoute.Top + btnRoute.Height + 10%y
+			TabHost1.Height = btnRoute.Top + btnRoute.Height + 15%y
+			AddPicture.Visible=False
 			Log("tabHost height: "&TabHost1.Height)
 			PanelBuildingList.Height = TabHost1.Height + TabHost1.Top
 			ScrollView1.Panel.Height = PanelBuildingList.Height
 		Case 1
-			
+			CLV1.Clear
+			AddPicture.Visible=False
+			ProgressDialogShow("loading...")
+			ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id ='"&ids&"'","FASILITAS")
+			ExecuteRemoteQuery("SELECT E.educational_building_id, E.name_of_educational_building, E.building_area, E.land_area, E.parking_area, E.standing_year, E.electricity_capacity, E.address, E.type_of_construction, E.id_level_of_education, E.headmaster_name, E.total_students, E.total_teachers, E.school_type,ST_X(ST_Centroid(E.geom)) As longitude, ST_Y(ST_CENTROID(E.geom)) As latitude, T.name_of_type As constr, L.name_of_level As levels, ST_AsText(geom) As geom FROM educational_building As E	LEFT JOIN type_of_construction As T ON E.type_of_construction=T.type_id	LEFT JOIN level_of_education As L ON E.id_level_of_education=L.level_id	WHERE E.educational_building_id='"&ids&"'","DATA")
 		Case 2
-			Msgbox("Current tab is " & TabHost1.CurrentTab, "")
-			PanelGallery.Height = 100%y - (TabHost1.Top + 10%y)
-			TabHost1.Height = PanelGallery.Top + PanelGallery.Height
-			PanelBuildingList.Height = TabHost1.Height + TabHost1.Top
-			ScrollView1.Panel.Height = PanelBuildingList.Height
-			'TabHost1.Color=Colors.Black
-			menu.Initialize(PanelGallery, Me, "ArcMenu", LoadBitmap(File.DirAssets, "menu_button_anim.png"), LoadBitmap(File.DirAssets, "menu_button_bg.png"), 50%x, 60%y)
-			menu.SetDegreeSpan(180)
-			menu.SetMenuItemRadius(20%x)
-			menu.AddItem(LoadBitmap(File.DirAssets, "album-a.png"))
-			menu.AddItem(LoadBitmap(File.DirAssets, "maps-a.png"))
-			menu.AddItem(LoadBitmap(File.DirAssets, "sett-a.png"))
-			menu.AddItem(LoadBitmap(File.DirAssets, "bt-a.png"))
-			menu.AddItem(LoadBitmap(File.DirAssets, "mess-a.png"))
-			menu.AddItem(LoadBitmap(File.DirAssets, "info-a.png"))
-			
-'	menu.AddItem(LoadBitmap(File.DirAssets, "bt.png"))
-'	menu.AddItem(LoadBitmap(File.DirAssets, "mess.png"))
-'	menu.AddItem(LoadBitmap(File.DirAssets, "info.png"))
+			'Msgbox("Current tab is " & TabHost1.CurrentTab, "")
+			AddPicture.Visible=True
+			ProgressDialogShow("loading...")
+			ExecuteRemoteQuery("SELECT photo_url, upload_date FROM educational_building_gallery WHERE educational_building_id='"&ids&"'","Download")
 	End Select
 
+End Sub
+
+Sub ImageView1_Click
+	Dim iv As ImageView
+	iv = Sender
+	If iv.Background Is BitmapDrawable Then
+		'It will be ColorDrawable when there is no image.
+		Dim bd As BitmapDrawable
+		bd = iv.Background
+		Dim bmp As Bitmap
+		bmp = bd.Bitmap
+		CallSubDelayed2(ShowImage, "Show", bmp)
+	End If
 End Sub
 
 Sub BackArrow_Click
 	Activity.Finish
-End Sub
-
-Sub ArcMenu_Click(position As Int)
-	
-	Select position
-		Case 1
-			StartActivity(MainCamera)
-			ToastMessageShow("Item " & position & " Clicked", False)			
-	End Select
-End Sub
-
-Sub ArcMenu_LongClick(position As Int)
-	ToastMessageShow("Item " & position & " LongClicked", False)
-End Sub
-
-Sub ArcMenu_AnimationEnd(Open As Boolean)
-	ToastMessageShow("AnimationEnded, Menu Open = " & Open, False)
 End Sub
 
 Sub editBtn_Click

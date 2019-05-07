@@ -52,47 +52,47 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Set building name
 	Select Home.HomeBuilding 
 		Case "Worship"
-			If WorshipBuilding.nameBuilding.Length > 0 Then
-				idBuilding= WorshipBuilding.nameBuilding
+			If WorshipBuilding.idBuilding.Length > 0 Then
+				idBuilding= WorshipBuilding.idBuilding
 				Log(idBuilding)
 			Else
 				Msgbox("Can't get the ID","Error Message")
 				Activity.Finish
 			End If
 		Case "Office"
-			If OfficeBuilding.nameBuilding.Length > 0 Then
-				idBuilding= OfficeBuilding.nameBuilding
+			If OfficeBuilding.idBuilding.Length > 0 Then
+				idBuilding= OfficeBuilding.idBuilding
 				Log(idBuilding)
 			Else
 				Msgbox("Can't get the ID","Error Message")
 				Activity.Finish
 			End If	
 		Case "Health"
-			If HealthBuilding.nameBuilding.Length > 0 Then
-				idBuilding= HealthBuilding.nameBuilding
+			If HealthBuilding.idBuilding.Length > 0 Then
+				idBuilding= HealthBuilding.idBuilding
 				Log(idBuilding)
 			Else
 				Msgbox("Can't get the ID","Error Message")
 				Activity.Finish
 			End If
 		Case "Msme"
-			If MsmeBuilding.nameBuilding.Length > 0 Then
-				idBuilding= MsmeBuilding.nameBuilding
+			If MsmeBuilding.idBuilding.Length > 0 Then
+				idBuilding= MsmeBuilding.idBuilding
 				Log(idBuilding)
 			Else
 				Msgbox("Can't get the ID","Error Message")
 				Activity.Finish
 			End If
 		Case "Educational"
-			If EducationalBuilding.nameBuilding.Length > 0 Then
-				idBuilding= EducationalBuilding.nameBuilding
+			If EducationalBuilding.idBuilding.Length > 0 Then
+				idBuilding= EducationalBuilding.idBuilding
 				Log(idBuilding)
 			Else
 				Msgbox("Can't get the ID","Error Message")
 				Activity.Finish
 			End If
 		Case Else
-			If SearchBuilding.nameBuilding.Length > 0 Then
+			If SearchBuilding.idBuilding.Length > 0 Then
 				idBuilding = SearchBuilding.idBuilding
 				Log(idBuilding)
 			Else
@@ -191,7 +191,12 @@ Sub JobDone(Job As HttpJob)
 				Dim fasi_array As List = parserf.NextArray
 				parserfa.Initialize(res)
 				Dim c As Int
-				If fasi_array.Size > 0 Then
+				If fasi_array.Size-1 < 0 Then
+					Panel1.Enabled=False
+					Panel1.Color=Colors.ARGB(225,247,247,247)
+					Label2.TextColor=0xFFCECECE
+					Panel1.Visible=True
+				Else
 					For c=0 To fasi_array.Size - 1
 						Dim a As Map
 						a = fasi_array.Get(c)
@@ -204,10 +209,8 @@ Sub JobDone(Job As HttpJob)
 					Panel1.Enabled=True
 					Panel1.Color=Colors.White
 					Label2.TextColor=Colors.Black
-				Else
-					Panel1.Enabled=False
-					Panel1.Color=Colors.ARGB(225,247,247,247)
-					Label2.TextColor=0xFFCECECE
+					Panel1.Visible =True
+					
 				End If
 				ProgressDialogHide
 			Case "Facility"

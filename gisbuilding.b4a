@@ -1,106 +1,128 @@
 ﻿Build1=Default,b4a.example
 File1=1.bal
-File10=calend-a.png
-File11=card1.bal
-File12=card2.bal
-File13=clvBuildingList.bal
-File14=delete (2).png
-File15=EditBuildingFacility.bal
-File16=edittext.png
-File17=Educational_tabDetail.bal
-File18=educational-building-home.png
-File19=EducationalDetail.bal
+File10=BuildingList.bal
+File100=store-2.png
+File101=tabGallery.bal
+File102=tabHome_icon.png
+File103=tabMap.bal
+File104=toolbar-2.png
+File105=Welcome.bal
+File106=Worship_tabDetail.bal
+File107=worship-building-home.png
+File108=WorshipDetail.bal
+File109=WorshipDetail2.bal
+File11=BuildingListTwo.bal
+File110=WorshipEdit.bal
+File12=calend-a.png
+File13=card1.bal
+File14=card2.bal
+File15=clvBuildingList.bal
+File16=delete (2).png
+File17=EditBuildingFacility.bal
+File18=edittext.png
+File19=Educational_tabDetail.bal
 File2=AddBuildingFacility.bal
-File20=EducationalEdit.bal
-File21=facility_edit.bal
-File22=facility_list.bal
-File23=galleryicon.png
-File24=galleryicon-white.png
-File25=Health_tabDetail.bal
-File26=HealthDetail.bal
-File27=HealthEdit.bal
-File28=home.png
-File29=home-1.png
-File3=AdminScrollView.bal
-File30=home2.png
-File31=home-2.png
-File32=HomeAdmin.bal
-File33=HomeContent.bal
-File34=homeic.png
-File35=hospital-buildings-1.png
-File36=hospital-buildings-2.png
-File37=House_tabDetail.bal
-File38=house-building-home.png
-File39=HouseDetail.bal
-File4=album-a.png
-File40=ic_cached_white_24dp.png
-File41=ic_done_white_24dp.png
-File42=info.png
-File43=info2.png
-File44=info-a.png
-File45=login_layout.bal
-File46=logotoolbar.png
-File47=logout.png
-File48=mail-a.png
-File49=MainHome.bal
-File5=back-arrow.png
-File50=MainScrollView.bal
-File51=map.png
-File52=map2.png
-File53=map-marker.png
-File54=maps-a.png
-File55=maps-and-flags.png
-File56=MapScrollView.bal
-File57=menu_button_anim.png
-File58=menu_button_bg.png
-File59=mess-a.png
-File6=background-welcome.png
-File60=mosque-1.png
-File61=mosque-2.png
-File62=Msme_tabDetail.bal
-File63=MsmeDetail.bal
-File64=MsmeEdit.bal
-File65=Office_tabDetail.bal
-File66=office-1.png
-File67=office-2.png
-File68=office-building-home.png
-File69=OfficeDetail.bal
-File7=bt-a.png
-File70=OfficeEdit.bal
-File71=OfficeEdit3.bal
-File72=office-pres.png
-File73=pexels-photo-446811.jpeg
-File74=pexels-photo-571195.jpeg
-File75=pexels-photo-592798.jpeg
-File76=pexels-photo-736212.jpeg
-File77=phone-a.png
-File78=pin.png
-File79=school-1.png
-File8=BuildingList.bal
-File80=school-2.png
-File81=search.png
-File82=search2.png
-File83=SearchBuilding.bal
-File84=SearchPanelnside.bal
-File85=SEGOEUI.TTF
-File86=sett-a.png
-File87=splash.bal
-File88=stillpicture.bal
-File89=store-1.png
-File9=BuildingListTwo.bal
-File90=store-2.png
-File91=tabGallery.bal
-File92=tabMap.bal
-File93=toolbar-2.png
-File94=Welcome.bal
-File95=Worship_tabDetail.bal
-File96=worship-building-home.png
-File97=WorshipDetail.bal
-File98=WorshipDetail2.bal
-File99=WorshipEdit.bal
+File20=educational-building-home.png
+File21=EducationalDetail.bal
+File22=EducationalEdit.bal
+File23=facility_edit.bal
+File24=facility_list.bal
+File25=galleryicon.png
+File26=galleryicon-white.png
+File27=Health_tabDetail.bal
+File28=HealthDetail.bal
+File29=HealthEdit.bal
+File3=AddPhoto.bal
+File30=home.bmp
+File31=home.png
+File32=home-1.png
+File33=home2.png
+File34=home-2.png
+File35=HomeAdmin.bal
+File36=HomeContent.bal
+File37=homeic.png
+File38=hospital-buildings-1.png
+File39=hospital-buildings-2.png
+File4=AdminScrollView.bal
+File40=House_tabDetail.bal
+File41=house-building-home.png
+File42=HouseDetail.bal
+File43=ic_cached_white_24dp.png
+File44=ic_done_white_24dp.png
+File45=ImageViewer.bal
+File46=info.png
+File47=info2.png
+File48=info-a.png
+File49=legenda.png
+File5=album-a.png
+File50=listitem-image.bal
+File51=LoaderImage.bal
+File52=login_layout.bal
+File53=logotoolbar.png
+File54=logout.png
+File55=mail-a.png
+File56=MainHome.bal
+File57=MainScrollView.bal
+File58=map.png
+File59=map2.png
+File6=back-arrow(2).png
+File60=MapLocation.bal
+File61=map-manual.png
+File62=map-marker.png
+File63=maps-a.png
+File64=maps-and-flags.png
+File65=MapScrollView.bal
+File66=menu_button_anim.png
+File67=menu_button_bg.png
+File68=mess-a.png
+File69=mosque-1.png
+File7=back-arrow.png
+File70=mosque-2.png
+File71=Msme_tabDetail.bal
+File72=MsmeDetail.bal
+File73=MsmeEdit.bal
+File74=Office_tabDetail.bal
+File75=office-1.png
+File76=office-2.png
+File77=office-building-home.png
+File78=OfficeDetail.bal
+File79=OfficeEdit.bal
+File8=background-welcome.png
+File80=OfficeEdit3.bal
+File81=office-pres.png
+File82=pexels-photo-446811.jpeg
+File83=pexels-photo-571195.jpeg
+File84=pexels-photo-592798.jpeg
+File85=pexels-photo-736212.jpeg
+File86=phone-a.png
+File87=pin.png
+File88=refresh.png
+File89=school-1.png
+File9=bt-a.png
+File90=school-2.png
+File91=search.png
+File92=search2.png
+File93=SearchBuilding.bal
+File94=SearchPanelnside.bal
+File95=SEGOEUI.TTF
+File96=sett-a.png
+File97=splash.bal
+File98=stillpicture.bal
+File99=store-1.png
 FileGroup1=Default Group
 FileGroup10=Default Group
+FileGroup100=Default Group
+FileGroup101=Default Group
+FileGroup102=Default Group
+FileGroup103=Default Group
+FileGroup104=Default Group
+FileGroup105=Default Group
+FileGroup106=Default Group
+FileGroup107=Default Group
+FileGroup108=Default Group
+FileGroup109=Default Group
 FileGroup11=Default Group
+FileGroup110=Default Group
 FileGroup12=Default Group
 FileGroup13=Default Group
 FileGroup14=Default Group
@@ -200,62 +222,75 @@ FileGroup99=Default Group
 Group=Default Group
 IconFile=
 Library1=core
-Library10=stringutils
-Library11=animationplus
-Library12=dialogs
-Library13=randomaccessfile
-Library14=ahpreferenceactivity
-Library15=b4xencryption
-Library16=encryption
-Library17=byteconverter
-Library18=keyvaluestore2
-Library19=runtimepermissions
+Library10=dialogs
+Library11=randomaccessfile
+Library12=ahpreferenceactivity
+Library13=b4xencryption
+Library14=encryption
+Library15=byteconverter
+Library16=keyvaluestore2
+Library17=runtimepermissions
+Library18=gps
+Library19=camera2
 Library2=animation
-Library20=gps
-Library21=camera2
-Library3=okhttp
-Library4=json
-Library5=reflection
-Library6=okhttputils2
-Library7=javaobject
-Library8=xui
-Library9=xcustomlistview
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~SetApplicationAttribute(android:theme, "@style/LightTheme")~\n~CreateResource(values, colors.xml,~\n~<resources>~\n~    <color name="actionbar">#B30000</color>~\n~   <color name="statusbar">#ff006db3</color>~\n~   <color name="textColorPrimary">#000000</color>~\n~   <color name="navigationBar">#B30000</color>~\n~</resources>~\n~)~\n~CreateResource(values-v20, theme.xml,~\n~<resources>~\n~    <style name="LightTheme" parent="@android:style/Theme.Material.Light">~\n~        <item name="android:colorPrimary">@color/actionbar</item>~\n~        <item name="android:colorPrimaryDark">@color/statusbar</item>~\n~        <item name="android:textColorPrimary">@color/textColorPrimary</item>~\n~        <item name="android:navigationBarColor">@color/navigationBar</item>~\n~    </style>~\n~</resources>~\n~)~\n~CreateResource(values-v14, theme.xml,~\n~<resources>~\n~    <style name="LightTheme" parent="@android:style/Theme.Holo.Light">~\n~       <item name="android:actionBarStyle">@style/CustomActionBarStyle</item>~\n~    </style>~\n~   <style name="CustomActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">~\n~       <item name="android:background">@color/actionbar</item>~\n~   </style>~\n~</resources>~\n~)~\n~'End of default text.~\n~
+Library20=xcustomlistview
+Library21=touchimageview
+Library22=contentresolver
+Library23=phone
+Library24=base64image
+Library25=okhttputils2
+Library26=sql
+Library27=googlemaps
+Library28=webviewextras
+Library3=json
+Library4=reflection
+Library5=okhttp
+Library6=javaobject
+Library7=xui
+Library8=stringutils
+Library9=animationplus
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="26"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:hardwareAccelerated,"false")~\n~SetApplicationAttribute(android:largeHeap,"true")~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~SetApplicationAttribute(android:theme, "@style/LightTheme")~\n~CreateResource(values, colors.xml,~\n~<resources>~\n~    <color name="actionbar">#B30000</color>~\n~   <color name="statusbar">#ff006db3</color>~\n~   <color name="textColorPrimary">#000000</color>~\n~   <color name="navigationBar">#B30000</color>~\n~</resources>~\n~)~\n~CreateResource(values-v20, theme.xml,~\n~<resources>~\n~    <style name="LightTheme" parent="@android:style/Theme.Material.Light">~\n~        <item name="android:colorPrimary">@color/actionbar</item>~\n~        <item name="android:colorPrimaryDark">@color/statusbar</item>~\n~        <item name="android:textColorPrimary">@color/textColorPrimary</item>~\n~        <item name="android:navigationBarColor">@color/navigationBar</item>~\n~    </style>~\n~</resources>~\n~)~\n~CreateResource(values-v14, theme.xml,~\n~<resources>~\n~    <style name="LightTheme" parent="@android:style/Theme.Holo.Light">~\n~       <item name="android:actionBarStyle">@style/CustomActionBarStyle</item>~\n~    </style>~\n~   <style name="CustomActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">~\n~       <item name="android:background">@color/actionbar</item>~\n~   </style>~\n~</resources>~\n~)~\n~AddManifestText(~\n~<uses-permission~\n~android:name="android.permission.WRITE_EXTERNAL_STORAGE"~\n~android:maxSdkVersion="18" />~\n~<uses-permission~\n~android:name="android.permission.READ_EXTERNAL_STORAGE"/>~\n~)~\n~AddApplicationText(~\n~<meta-data~\n~  android:name="com.google.android.geo.API_KEY"~\n~  android:value="AIzaSyBNnzxae2AewMUN0Tt_fC3gN38goeLVdVE"/>~\n~)~\n~'End of default text.~\n~'End of default text.~\n~
 Module1=Starter
-Module10=HomeAdmin
-Module11=WorshipDetail
-Module12=WorshipEdit
-Module13=Login
-Module14=WorshipBuilding
-Module15=HouseBuilding
-Module16=HealthDetail
-Module17=MsmeDetail
-Module18=OfficeDetail
-Module19=HouseDetail
-Module2=EditBuildingFacility
-Module20=Home
-Module21=HealthBuilding
-Module22=Gallery
-Module23=OfficeBuilding
-Module24=EducationalBuilding
-Module25=MsmeBuilding
-Module26=OfficeEdit
-Module27=MsmeEdit
-Module28=BuildingList
-Module29=MapLocation
-Module3=AddBuildingFacility
-Module30=Help
-Module31=HealthEdit
-Module32=searchWorship
-Module4=EducationalEdit
-Module5=EducationalDetail
-Module6=SearchBuilding
-Module7=MainCamera
-Module8=CamEx2
-Module9=ArcMenu
-NumberOfFiles=99
-NumberOfLibraries=21
-NumberOfModules=32
+Module10=WorshipDetail
+Module11=EducationalDetail
+Module12=HealthDetail
+Module13=HouseDetail
+Module14=LoaderImage
+Module15=MsmeDetail
+Module16=MainCamera
+Module17=FileUtil
+Module18=ShowImage
+Module19=BrowseGallery
+Module2=SearchBuilding
+Module20=EducationalEdit
+Module21=ArcMenu
+Module22=EditBuildingFacility
+Module23=AddBuildingFacility
+Module24=CamEx2
+Module25=HomeAdmin
+Module26=HouseBuilding
+Module27=WorshipEdit
+Module28=HealthBuilding
+Module29=Gallery
+Module3=ManualPosition
+Module30=OfficeBuilding
+Module31=EducationalBuilding
+Module32=OfficeEdit
+Module33=MsmeEdit
+Module34=BuildingList
+Module35=Help
+Module36=HealthEdit
+Module37=searchWorship
+Module38=MultipartPost
+Module4=MsmeBuilding
+Module5=Home
+Module6=OfficeDetail
+Module7=Login
+Module8=WorshipBuilding
+Module9=AddPhoto
+NumberOfFiles=110
+NumberOfLibraries=28
+NumberOfModules=38
 Version=8
 @EndOfDesignText@
 #Region  Project Attributes 
@@ -266,6 +301,8 @@ Version=8
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
 	#AdditionalJar: com.android.support:support-compat
+	#AdditionalJar: com.google.android.gms:play-services-maps
+	#BridgeLogger : True
 #End Region
 
 #Region  Activity Attributes 
@@ -283,12 +320,14 @@ Sub Process_Globals
 '	Type DBCommand (Name As String, Parameters() As Object)
 '	Private const rdcLink As String = "http://192.168.1.13:17178/rdc"
 	Dim tmSplash As Timer 'timer untuk animasi splash screen
-	Dim Server As String = "https://a0982b8e.ngrok.io/gisbuilding_mobile/"
+	Dim Server As String = "https://d809bd8c.ngrok.io/gisbuilding_mobile/"
 	Dim ServerMap As String = Server
 	Dim lblLon As String
 	Dim lblLat As String
 	Dim lblSpeed As String
 	Dim lblSatellites As String
+	Private rp As RuntimePermissions
+	Dim folder As String
 End Sub
 
 Sub Globals
@@ -303,6 +342,7 @@ Sub Globals
 	Private LblSignin As Label
 	Private ImageView1 As ImageView
 	Private CheckBox1 As CheckBox
+	
 End Sub
 
 
@@ -310,7 +350,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	CheckLoginSession
 	If FirstTime Then 'jika aplikasi pertama diaktifkan
-		kvs.Initialize(File.DirInternal, "datastore")
+		folder = rp.GetSafeDirDefaultExternal("data")
+		kvs.Initialize(folder, "datastore")
 		Activity.LoadLayout("splash")
 		AnimSplash 'Panggil function animasi splash screen
 		tmSplash.Initialize("tmSplash",3500) 'panggil event timer tpSplash dengan interval waktu 4s
@@ -384,10 +425,17 @@ Public Sub GpsStatus (Satellites As List)
 End Sub
 
 Public Sub LocationChanged(Location1 As Location)
-	lblLat = "Lat = " & Location1.ConvertToMinutes(Location1.Latitude)
-	lblLon = "Lon = " & Location1.ConvertToMinutes(Location1.Longitude)
+	Dim Longi As String
+	Dim latitu As String
+	latitu =Location1.Latitude
+	Longi =Location1.Longitude
 	lblSpeed= $"Speed = $1.2{Location1.Speed} m/s "$
-	
+	Dim latt,  lonn As String
+	latt = latitu
+	lblLat = latt
+	lonn = Longi
+	lblLon= lonn
+	ToastMessageShow(lblLat&" , "&lblLon,False)
 	Log("Speed : "&lblSpeed)
 	Log("Lat : "&lblLat)
 	Log("Long : "&lblLon)
