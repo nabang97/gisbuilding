@@ -79,15 +79,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	TitleBar.Text="Building Detail"
 	
 	'Set building name
-	Log(WorshipBuilding.nameBuilding.Length)
-	If  WorshipBuilding.nameBuilding.Length > 0 Then
-		WorshipName.Text = WorshipBuilding.nameBuilding
-		ids = WorshipBuilding.idBuilding
-	Else If SearchBuilding.nameBuilding.Length > 0 Then
-		WorshipName.Text = SearchBuilding.nameBuilding
-		ids = SearchBuilding.idBuilding
-		Log(SearchBuilding.nameBuilding)
-	End If
+	FunctionAll.CheckBuilding_id(WorshipBuilding.idBuilding)
+	ids = FunctionAll.ids
+	
 	TabHost1.CurrentTab = 1
 	AddPicture.Initialize("AddPicture")
 End Sub

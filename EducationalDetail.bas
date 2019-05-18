@@ -67,7 +67,8 @@ Sub Globals
 	Private PanelGallery As Panel
 	
 	Private AddPicture As Button
-	AddPicture.Initialize("AddPicture")
+	
+
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -85,22 +86,12 @@ Sub Activity_Create(FirstTime As Boolean)
 	BackArrow.SetBackgroundImage(LoadBitmap(File.DirAssets,"back-arrow.png"))
 	TitleBar.Text="Building Detail"
 	
-	'Set building name
-	If EducationalBuilding.nameBuilding.Length > 0 Then
-		EducationName.Text = EducationalBuilding.nameBuilding
-		ids =EducationalBuilding.idBuilding
-		Log(ids)
-	Else
-		EducationName.Text = "Please press on the button and choose an item."
-	End If
 	
-	If SearchBuilding.nameBuilding.Length > 0 Then
-		EducationName.Text = SearchBuilding.nameBuilding
-		ids =SearchBuilding.idBuilding
-		Log(ids)
-	Else
-		EducationName.Text = "Please press on the button and choose an item."
-	End If
+	AddPicture.Initialize("AddPicture")
+	'Set building name
+	FunctionAll.CheckBuilding_id(OfficeBuilding.idBuilding)
+	ids = FunctionAll.ids
+	Log("DARI SINI"&ids)
 
 	TabHost1.CurrentTab = 1
 End Sub

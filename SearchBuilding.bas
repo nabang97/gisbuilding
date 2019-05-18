@@ -68,6 +68,7 @@ Sub Globals
 	Dim radiusku As Int
 	Private Label3 As Label
 	Private BtnMap As Button
+	Dim datapath As String = Main.folder
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -129,14 +130,8 @@ Sub CreateSpinBuilding_Item
 	spinnerMapB.Put("Office Building","Office")
 	SpinBuilding.Add("Worship Building")
 	spinnerMapB.Put("Worship Building","Worship")
-	
-	If File.Exists(File.DirInternal,"datastore") Then
-		If Main.kvs.ContainsKey("role") == True Then
-			SpinBuilding.Add("House Building")
-			spinnerMapB.Put("House Building","House")
-		End If
-	End If
-	
+	SpinBuilding.Add("House Building")
+	spinnerMapB.Put("House Building","House")		
 	SpinBuilding.Add("Educational Building")
 	spinnerMapB.Put("Educational Building","Educational")
 	SpinBuilding.Add("Health Building")
@@ -1044,14 +1039,14 @@ Sub BtnSearch_Click
 End Sub
 
 Sub BtnHome_Click
-	If File.Exists(File.DirInternal,"datastore") Then
+	If File.Exists(Main.folder,"datastore") Then
 		If Main.kvs.ContainsKey("role") == True Then
 			StartActivity(HomeAdmin)
+			Activity.Finish
 		Else
 			StartActivity(Home)
+			Activity.Finish
 		End If
-	Else
-		StartActivity(Home)
 	End If
 End Sub
 
@@ -1102,7 +1097,7 @@ Sub SpinBuilding_ItemClick (Position As Int, Value As Object)
 			spinnerMap.Put("Type","type")
 			SpinSearch.Add("Jorong")
 			spinnerMap.Put("Jorong","jorong")
-			If File.Exists(File.DirInternal,"datastore") Then
+			If File.Exists(datapath,"datastore") Then
 				If Main.kvs.ContainsKey("role") == True Then
 					SpinSearch.Add("Income")
 					spinnerMap.Put("Income","income")
@@ -1132,8 +1127,8 @@ Sub SpinBuilding_ItemClick (Position As Int, Value As Object)
 			SpinSearch.add("Select Search Type")
 			SpinSearch.Add("ID Rumah")
 			spinnerMap.Put("ID Rumah","id")
-			If File.Exists(File.DirInternal,"datastore") Then
-				If Main.kvs.ContainsKey("role") == True Then
+			If File.Exists(datapath,"datastore") Then
+				If Main.kvs.ContainsKey("role") Then
 					SpinSearch.Add("Owner")
 					spinnerMap.Put("Owner","owner")
 					SpinSearch.Add("Occupant")
@@ -1331,4 +1326,20 @@ End Sub
 
 Sub BtnMap_Click
 	StartActivity(ManualPosition)
+	Activity.Finish
+End Sub
+
+Sub Activity_KeyPress (KeyCode As Int) As Boolean  ' Return true to consume the event
+	Dim isLogin As Boolean
+	isLogin = Login.manager.GetBoolean("is_login")
+	Log("keyy: "&KeyCodes.KEYCODE_BACK)
+	If KeyCode = KeyCodes.KEYCODE_BACK Then  ' Back button
+		If File.Exists(Main.folder,"datastore") Then
+			If Main.kvs.ContainsKey("role")Then
+				StopService(Starter)
+				Main.ShouldIClose = True
+				Activity.Finish
+			End If
+		End If
+	End If
 End Sub

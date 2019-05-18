@@ -82,17 +82,9 @@ Sub Activity_Create(FirstTime As Boolean)
 	TabHost1.AddTab("Gallery","tabGallery")
 	
 	'Set building name
-	If HealthBuilding.nameBuilding.Length > 0 Then
-		HealthName.Text = HealthBuilding.nameBuilding
-		ids =HealthBuilding.idBuilding
-		Log(ids)
-	Else If SearchBuilding.nameBuilding.Length > 0 Then
-		HealthName.Text = SearchBuilding.nameBuilding
-		ids =SearchBuilding.idBuilding
-		Log(ids)
-	Else
-		HealthName.Text = "Please press on the button and choose an item."
-	End If
+	FunctionAll.CheckBuilding_id(HealthBuilding.idBuilding)
+	ids = FunctionAll.ids
+	Log("DARI SINI"&ids)
 
 	TabHost1.CurrentTab = 1
 	AddPicture.Initialize("AddPicture")

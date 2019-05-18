@@ -103,8 +103,9 @@ Sub JobDone(Job As HttpJob)
 						Else
 							SetLoginSession(False)
 						End If
-					StartActivity(HomeAdmin)
 					Activity.Finish
+					StartActivity(HomeAdmin)
+					
 				Else
 					Msgbox("Username atau Password salah.", "Login Gagal")
 				End If
@@ -132,8 +133,5 @@ Sub Btnlogin_Click
 	md5string = ByteCon.HexFromBytes(passwordhash)
 	md5string = md5string.ToLowerCase
 	Log(md5string)
-	
 	ExecuteRemoteQuery("SELECT * FROM user_account where username='"&EditUsername.Text&"' and password='"&md5string&"'","Data")
-	
-	
 End Sub

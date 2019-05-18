@@ -79,17 +79,8 @@ Sub Activity_Create(FirstTime As Boolean)
 	TabHost1.AddTab("Gallery","tabGallery")
 	
 	'Set building name
-	If MsmeBuilding.nameBuilding.Length > 0 Then
-		MsmeName.Text = MsmeBuilding.nameBuilding
-		ids = MsmeBuilding.idBuilding
-		Log(ids)
-	Else If SearchBuilding.nameBuilding.Length > 0 Then
-		MsmeName.Text = SearchBuilding.nameBuilding
-		ids = SearchBuilding.idBuilding
-		Log(ids)
-	Else
-		MsmeName.Text = "Please press on the button and choose an item."
-	End If
+	FunctionAll.CheckBuilding_id(MsmeBuilding.idBuilding)
+	ids = FunctionAll.ids
 	
 	TabHost1.CurrentTab = 1
 	

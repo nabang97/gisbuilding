@@ -31,7 +31,6 @@ End Sub
 
 Sub Service_Start (StartingIntent As Intent)
 	If rp.Check(rp.PERMISSION_ACCESS_FINE_LOCATION) Then StartGps
-
 End Sub
 
 Sub Service_TaskRemoved
@@ -39,6 +38,7 @@ Sub Service_TaskRemoved
 End Sub
 
 Public Sub StartGps
+	Log("GPS STAR")
 	If gpsStarted = False Then
 		GPS1.Start(0, 0)
 		gpsStarted = True
@@ -53,12 +53,30 @@ Public Sub StopGps
 End Sub
 
 Sub GPS_LocationChanged (Location1 As Location)
-	CallSub2(Main, "LocationChanged", Location1)
+	'CallSub2(Main, "LocationChanged", Location1)
+	Dim Longi As String
+	Dim latitu As String
+	latitu =Location1.Latitude
+	Longi =Location1.Longitude
+	Log("dari starter: "& latitu&","&Longi)
+	ToastMessageShow("Your current location: "&latitu&","&Longi,False)
+	CallSubDelayed3(ManualPosition,"LocationChanged",latitu,Longi)
 End Sub
 
-
 Sub GPS_GpsStatus (Satellites As List)
-	CallSub2(Main, "GpsStatus", Satellites)
+	'CallSub2(Main, "GpsStatus", Satellites)
+	Dim sb As StringBuilder
+	sb.Initialize
+	sb.Append("Satellites:").Append(CRLF)
+	For i = 0 To Satellites.Size - 1
+		Dim Satellite As GPSSatellite = Satellites.Get(i)
+		sb.Append(CRLF).Append(Satellite.Prn).Append($" $1.2{Satellite.Snr}"$).Append(" ").Append(Satellite.UsedInFix)
+		sb.Append(" ").Append($" $1.2{Satellite.Azimuth}"$).Append($" $1.2{Satellite.Elevation}"$)
+	Next
+	Dim lblSatellites As String
+	lblSatellites = sb.ToString
+	Log("dari starter ya: "&lblSatellites)
+	CallSub2(ManualPosition, "GpsStatus", lblSatellites)
 End Sub
 
 

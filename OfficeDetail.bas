@@ -50,7 +50,6 @@ Sub Globals
 	Private LblEdit As Label
 	Private LblFacility As Label
 	Private Panel4 As Panel
-	Dim TabHost1 As TabHost
 	Private PanelMap As Panel
 	Private btnRoute As Button
 	Private WebViewRoute As WebView
@@ -58,8 +57,14 @@ Sub Globals
 	Private editBtn As Button
 	Private editFacility As Button
 	Private PanelGallery As Panel
-	
+	Private tabRoute As Panel
+	Private tabDetail As Panel
+	'Private tabMap As Panel
 	Private AddPicture As Button
+	Private TabHost1 As TabHost
+	Dim TabManager As TabHostExtras
+	Dim tab_clicked, tab_unclicked As Int
+	Private tabGallery As Panel
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -75,33 +80,37 @@ Sub Activity_Create(FirstTime As Boolean)
 	BackArrow.SetBackgroundImage(LoadBitmapSample(File.DirAssets,"back-arrow.png",5%x,2%y))
 	TitleBar.Text="Building Detail"
 	
-	TabHost1.AddTab("Map","tabMap")
-	TabHost1.AddTab("Detail","Office_tabDetail")
-	TabHost1.AddTab("Gallery","tabGallery")
+	Dim bmp1, bmp2 As Bitmap
+	bmp1 = LoadBitmap(File.DirAssets, "home.png")
+	TabHost1.AddTabWithIcon("",LoadBitmap(File.DirAssets,"map-marker-blue.png"),LoadBitmap(File.DirAssets,"map-marker-blue.png"),"tabMap")
+	TabHost1.AddTab( "Detail","Office_tabDetail")
+	TabHost1.AddTab( "Gallery", "tabGallery")
+	
+	TabManager.setTabHeight(TabHost1,10%x)
+	TabManager.setTabGradientDrawable(TabHost1,"TOP_BOTTOM",Colors.Transparent,Colors.Transparent,0)
+	TabManager.setTabContentViewPadding(TabHost1,0,20,0,0)
 	
 'Set building name
-	If OfficeBuilding.nameBuilding.Length > 0 Then
-		OfficeName.Text = OfficeBuilding.nameBuilding
-		ids = OfficeBuilding.idBuilding
-		Log(ids)
-	Else
-		OfficeName.Text = "Please press on the button and choose an item."
-	End If
+	FunctionAll.CheckBuilding_id(OfficeBuilding.idBuilding)
+	ids = FunctionAll.ids
+	Log("DARI SINI"&ids)
 	
-	If SearchBuilding.nameBuilding.Length > 0 Then
-		OfficeName.Text = SearchBuilding.nameBuilding
-		ids = SearchBuilding.idBuilding
-		Log(ids)
-	Else
-		OfficeName.Text = "Please press on the button and choose an item."
-	End If
-	
-	TabHost1.CurrentTab = 1
+ 	TabHost1.CurrentTab = 1
 	AddPicture.Initialize("AddPicture")
+	
+	
+	tab_clicked=Colors.White
+	tab_unclicked=Colors.ARGB(255,0,111,196)
+	FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+	FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+	
 End Sub
 Sub Activity_Resume
+'	FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+'	FunctionAll.setCornerRadii(tabGallery,0,0,25,25,25,25,0,0)
 	CLV1.Clear
 	ProgressDialogShow("Loading...")
+	
 	If TabHost1.CurrentTab == 2 Then
 		clv.Clear
 		ExecuteRemoteQuery("SELECT photo_url, upload_date FROM office_building_gallery WHERE office_building_id='"&ids&"'","Download")
@@ -152,7 +161,7 @@ Sub JobDone(Job As HttpJob)
 					NotFound.TextSize = 15
 					NotFound.Gravity = Gravity.CENTER
 					PanelGallery.Height = NotFound.Height
-					TabHost1.Height = PanelGallery.Height
+					'TabHost1.Height = PanelGallery.Height
 					Msgbox("Galery Foto tidak ditemukan", "Peringatan")
 				Else
 					ScrollImage.Initialize(100%y)
@@ -185,6 +194,8 @@ Sub JobDone(Job As HttpJob)
 				PanelBuildingList.Height = AddPicture.Top + AddPicture.Height
 				ScrollView1.Panel.Height = PanelBuildingList.Height
 				ProgressDialogHide
+			FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+				FunctionAll.setCornerRadii(tabGallery,0,0,25,25,25,25,0,0)
 				
 			Case "FASILITAS"
 				Dim fasilitas_array As List
@@ -202,27 +213,29 @@ Sub JobDone(Job As HttpJob)
 							TabHost1.Height = PFacility.Top+PFacility.Height
 					End Select
 				Else
-				For i=0 To fasilitas_array.Size - 1
-					Dim a As Map
-					a = fasilitas_array.Get(i)
-					'Set CustomListView for Facility
-					Dim content As String = a.Get("name_of_facility")
-					Dim quantity As Int = a.Get("quantity_of_facilities")
-					CLV1.Add(CreateItem(CLV1.AsView.Width, $"${quantity}"$, content), "")
-					CLV1.AsView.Height = ListItem.Height*(i+1)
-				Next
-				CLV1.sv.Height = CLV1.AsView.Height
-				PFacility.Height = LblFacility.Height + LblFacility.Top
-				PFacility.Height = PFacility.Height + CLV1.sv.Height + CLV1.AsView.Top
-				Select TabHost1.CurrentTab
-					Case 1
-						TabHost1.Height = PFacility.Top+PFacility.Height +  10%y
-				End Select
+					For i=0 To fasilitas_array.Size - 1
+						Dim a As Map
+						a = fasilitas_array.Get(i)
+						'Set CustomListView for Facility
+						Dim content As String = a.Get("name_of_facility")
+						Dim quantity As Int = a.Get("quantity_of_facilities")
+						CLV1.Add(CreateItem(CLV1.AsView.Width, $"${quantity}"$, content), "")
+						CLV1.AsView.Height = ListItem.Height*(i+1)
+					Next
+					CLV1.sv.Height = CLV1.AsView.Height
+					PFacility.Height = LblFacility.Height + LblFacility.Top
+					PFacility.Height = PFacility.Height + CLV1.sv.Height + CLV1.AsView.Top
+					If TabHost1.CurrentTab = 1 Then
+							TabHost1.Height = PFacility.Top+PFacility.Height + 10%y
+					End If
 				End If
 				PanelBuildingList.Height = TabHost1.Height + TabHost1.Top + 2%y
 				ScrollView1.Panel.Height = PanelBuildingList.Height
+				ScrollView1.Height = ScrollView1.Panel.Height
 				Log(content)
 				ProgressDialogHide
+				FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+				FunctionAll.setCornerRadii(tabGallery,0,0,25,25,25,25,0,0)
 				
 			Case "DATA"
 				Dim data_array As List
@@ -243,6 +256,8 @@ Sub JobDone(Job As HttpJob)
 					Electricity.Text = a.Get("electricity_capacity")
 					Construction.Text = a.Get("constr")
 				Next
+				FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+				FunctionAll.setCornerRadii(tabGallery,0,0,25,25,25,25,0,0)
 		End Select
 	End If
 	Job.Release
@@ -258,27 +273,48 @@ Sub BackArrow_Click
 End Sub
 
 Sub TabHost1_TabChanged
-	
+	'FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
 	Select TabHost1.CurrentTab
 		Case 0
+			'FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+			tabRoute.Color = tab_clicked
+			tabDetail.Color= tab_unclicked
+			tabGallery.Color= tab_unclicked			
+			FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+			FunctionAll.setCornerRadii(tabGallery,0,0,25,25,25,25,0,0)
 			WebViewRoute.LoadUrl(Main.Server&"Office/Route.php?lat="&Main.lblLat&"&lng="&Main.lblLon&"&latd="&lat&"&lngd="&lng)
 			Msgbox("Current tab is " & TabHost1.CurrentTab, "")
 			Log ("Button Top :"&btnRoute.Top)
-			TabHost1.Height = btnRoute.Top + btnRoute.Height + 15%y 
+			TabHost1.Height = btnRoute.Top + btnRoute.Height + 15%y
 			Log("tabHost height: "&TabHost1.Height)
 			AddPicture.Visible=False
 			PanelBuildingList.Height = TabHost1.Height + TabHost1.Top
 			ScrollView1.Panel.Height = PanelBuildingList.Height
-		Case 1
+			
+		Case 1		
+			tabRoute.Color = tab_unclicked
+			tabDetail.Color= tab_clicked
+			tabGallery.Color = tab_unclicked
+			FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+			FunctionAll.setCornerRadii(tabGallery,0,0,25,25,25,25,0,0)
 			CLV1.Clear
 			AddPicture.Visible=False
 			ProgressDialogShow("Loading...")
 			ExecuteRemoteQuery("SELECT D.office_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id ='"&ids&"'","FASILITAS")
 			ExecuteRemoteQuery("SELECT O.office_building_id, O.name_of_office_building, O.building_area, O.land_area, O.parking_area, O.standing_year, O.electricity_capacity, O.address, O.type_of_construction, O.type_of_office, ST_X(ST_Centroid(O.geom)) As longitude, ST_Y(ST_CENTROID(O.geom)) As latitude,T.name_of_type As constr, J.name_of_type As typeof,	ST_AsText(geom) As geom	FROM office_building As O LEFT JOIN type_of_construction As T ON O.type_of_construction=T.type_id LEFT JOIN type_of_office As J ON O.type_of_office=J.type_id WHERE O.office_building_id='"&ids&"'","DATA")
+			
 		Case 2
+			'Log(FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25))
+			tabRoute.Color = tab_unclicked
+			tabDetail.Color = tab_unclicked
+			tabGallery.Color = tab_clicked
+			FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
+			FunctionAll.setCornerRadii(tabGallery,0,0,25,25,25,25,0,0)
+			'FunctionAll.setCornerRadii(tabRoute,25,25,0,0,0,0,25,25)
 			AddPicture.Visible=True
 			ProgressDialogShow("Loading...")
 			ExecuteRemoteQuery("SELECT photo_url, upload_date FROM office_building_gallery WHERE office_building_id='"&ids&"'","Download")
+			
 	End Select
 
 End Sub
@@ -303,3 +339,4 @@ Sub ImageView1_Click
 		CallSubDelayed2(ShowImage, "Show", bmp)
 	End If
 End Sub
+

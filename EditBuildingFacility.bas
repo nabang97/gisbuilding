@@ -16,6 +16,7 @@ Sub Process_Globals
 	Dim ArraySize2 As Int
 	Dim idisi,isi As String
 	Dim idBuilding As String
+	Dim arraysize As Int
 End Sub
 
 Sub Globals
@@ -105,48 +106,52 @@ Sub Activity_Create(FirstTime As Boolean)
 	Log("IDnyaa LOOOO: "&idBuilding)
 End Sub
 
-Sub Activity_Resume
-	CLV1.Clear
+Sub Activity_Resume	
 	FacMap.Initialize
-	Select Home.HomeBuilding
-		Case "Worship"
-			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from worship_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-			ExecuteRemoteQuery("SELECT D.worship_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id ='"&idBuilding&"'","Facility")
-		Case "Office"
-			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from office_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-			ExecuteRemoteQuery("SELECT D.office_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"'","Facility")
-		Case "Msme"
-			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from msme_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-			ExecuteRemoteQuery("SELECT D.msme_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"'","Facility")
-		Case "Educational"
-			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from educational_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-			ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"'","Facility")
-		Case "Health"
-			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from health_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_health_building_facilities As D LEFT JOIN health_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-			ExecuteRemoteQuery("SELECT D.health_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_health_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"'","Facility")
-		Case Else
-		Select SearchBuilding.idspin
-			Case "Worship"
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from worship_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.worship_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id ='"&idBuilding&"'","Facility")
-			Case "Office"
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from office_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.office_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"'","Facility")
-			Case "Msme"	
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from msme_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.msme_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"'","Facility")
-			Case "Educational"	
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from educational_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"'","Facility")
-			Case "Health"	
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from health_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_health_building_facilities As D LEFT JOIN health_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.health_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_health_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"'","Facility")
-		End Select
-	End Select
+	RefreshData
 End Sub
 
 Sub Activity_Pause (UserClosed As Boolean)
 
+End Sub
+
+Sub RefreshData
+	CLV1.Clear
+	Select Home.HomeBuilding
+		Case "Worship"
+			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from worship_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+			ExecuteRemoteQuery("SELECT D.worship_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id ='"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+		Case "Office"
+			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from office_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+			ExecuteRemoteQuery("SELECT D.office_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+		Case "Msme"
+			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from msme_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+			ExecuteRemoteQuery("SELECT D.msme_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+		Case "Educational"
+			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from educational_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+			ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+		Case "Health"
+			ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from health_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_health_building_facilities As D LEFT JOIN health_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+			ExecuteRemoteQuery("SELECT D.health_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_health_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+		Case Else
+			Select SearchBuilding.idspin
+				Case "Worship"
+					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from worship_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+					ExecuteRemoteQuery("SELECT D.worship_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id ='"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+				Case "Office"
+					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from office_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+					ExecuteRemoteQuery("SELECT D.office_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+				Case "Msme"
+					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from msme_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+					ExecuteRemoteQuery("SELECT D.msme_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+				Case "Educational"
+					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from educational_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+					ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+				Case "Health"
+					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from health_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_health_building_facilities As D LEFT JOIN health_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
+					ExecuteRemoteQuery("SELECT D.health_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_health_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"' ORDER BY F.name_of_facility ASC","Facility")
+			End Select
+	End Select
 End Sub
 
 Sub SetBackgroundTintList(View As View,Active As Int, Enabled As Int)
@@ -184,6 +189,15 @@ Sub JobDone(Job As HttpJob)
 		res = Job.GetString 'menyimpan json dalam bentuk string
 		Log("Response from server :"& res)	
 		Select Job.JobName
+			Case "Update"
+				Try
+					'ToastMessageShow("Updated!",False)
+					RefreshData
+				Catch
+					ProgressDialogHide
+					Msgbox("Errorr","")
+					Log(LastException)
+				End Try
 			Case "AllFacilities"
 				Dim parserf As JSONParser 'mengambil data dalam bentuk json menjadi array
 				Dim parserfa As JSONParser
@@ -218,6 +232,7 @@ Sub JobDone(Job As HttpJob)
 				parser.Initialize(res)
 				Dim fasilitas_array As List
 				fasilitas_array = parser.NextArray
+				arraysize = fasilitas_array.Size
 				If fasilitas_array.Size > 0 Then
 					For i=0 To fasilitas_array.Size - 1
 						Dim a As Map
@@ -248,43 +263,8 @@ Sub JobDone(Job As HttpJob)
 				ProgressDialogHide
 		Case "DeleteFacility"
 			Try
-				CLV1.Clear
-				Select Home.HomeBuilding
-				Case "Worship"
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from worship_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.worship_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id ='"&idBuilding&"'","Facility")
-				Case "Office"
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from office_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.office_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"'","Facility")
-				Case "Msme"
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from msme_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.msme_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"'","Facility")
-				Case "Educational"
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from educational_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"'","Facility")
-				Case "Health"
-					ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from health_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_health_building_facilities As D LEFT JOIN health_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-					ExecuteRemoteQuery("SELECT D.health_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_health_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"'","Facility")
-				Case Else
-					Select SearchBuilding.idspin
-						Case "Worship"
-							ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from worship_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-							ExecuteRemoteQuery("SELECT D.worship_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_worship_building_facilities As D LEFT JOIN worship_building_facilities As F ON F.facility_id=D.facility_id WHERE D.worship_building_id ='"&idBuilding&"'","Facility")
-						Case "Office"
-							ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from office_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-							ExecuteRemoteQuery("SELECT D.office_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_office_building_facilities As D LEFT JOIN office_building_facilities As F ON F.facility_id=D.facility_id WHERE D.office_building_id = '"&idBuilding&"'","Facility")
-						Case "Msme"
-							ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from msme_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-							ExecuteRemoteQuery("SELECT D.msme_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_msme_building_facilities As D LEFT JOIN msme_building_facilities As F ON F.facility_id=D.facility_id WHERE D.msme_building_id = '"&idBuilding&"'","Facility")
-						Case "Educational"
-							ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from educational_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-							ExecuteRemoteQuery("SELECT D.educational_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_educational_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.educational_building_id = '"&idBuilding&"'","Facility")
-						Case "Health"
-							ExecuteRemoteQuery("SELECT DISTINCT facility_id , name_of_facility from health_building_facilities WHERE name_of_facility NOT IN (SELECT DISTINCT F.name_of_facility  FROM detail_health_building_facilities As D LEFT JOIN health_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"') ORDER BY name_of_facility ASC","AllFacilities")
-							ExecuteRemoteQuery("SELECT D.health_building_id, D.facility_id, D.quantity_of_facilities, F.name_of_facility FROM detail_health_building_facilities As D LEFT JOIN educational_building_facilities As F ON F.facility_id=D.facility_id WHERE D.health_building_id = '"&idBuilding&"'","Facility")
-					End Select
-				End Select
-					ToastMessageShow("Deleted",True)	
+				RefreshData
+				ToastMessageShow("Deleted",True)	
 			Catch
 				Msgbox("Data can not be updated :(" , "error" )
 			End Try
@@ -295,7 +275,41 @@ Job.Release
  End Sub
   
 Sub BtnSaveChanges_Click
-	
+	ProgressDialogShow("updating..")
+	Log("beluum :"&arraysize)
+	Log("ini apa: ")
+	Dim j As Int
+	Select Home.HomeBuilding
+		Case "Worship"
+		Case "Office"
+			For j=0 To arraysize-1
+				ProgressDialogShow("updating..")
+				Log("INI DIAA : "&CLV1.GetPanel(j).GetView(0).GetView(1).GetView(0).Text)
+				ExecuteRemoteQuery("UPDATE detail_office_building_facilities SET quantity_of_facilities ="&CLV1.GetPanel(j).GetView(0).GetView(1).GetView(0).Text&" WHERE office_building_id = '"&idBuilding&"'","Update")
+			Next
+		Case "Msme"
+		Case "Educational"
+		Case "Health"
+		Case Else
+			Select SearchBuilding.idspin
+				Case "Worship"
+					'ExecuteRemoteQuery("DELETE FROM detail_worship_building_facilities WHERE worship_building_id = '"&idBuilding&"' AND facility_id = "&a.GetView(3).Text&" ","DeleteFacility")
+				Case "Office"										
+					For j=0 To arraysize-1						
+						Log("INI DIAA : "&CLV1.GetPanel(j).GetView(0).GetView(1).GetView(0).Text&" & ID:"&CLV1.GetPanel(j).GetView(0).GetView(3).Text)
+						ExecuteRemoteQuery("UPDATE detail_office_building_facilities SET quantity_of_facilities ="&CLV1.GetPanel(j).GetView(0).GetView(1).GetView(0).Text&" WHERE office_building_id = '"&idBuilding&"' and facility_id ="&CLV1.GetPanel(j).GetView(0).GetView(3).Text,"Update")
+						
+					Next					
+					ProgressDialogHide
+					
+				Case "Msme"
+					'ExecuteRemoteQuery("DELETE FROM detail_msme_building_facilities WHERE msme_building_id = '"&idBuilding&"' and facility_id = "&a.GetView(3).Text&"","DeleteFacility")
+				Case "Educational"
+					'ExecuteRemoteQuery("DELETE FROM detail_educational_building_facilities WHERE educational_building_id = '"&idBuilding&"' and facility_id = "&a.GetView(3).Text&"","DeleteFacility")
+				Case "Health"
+					'ExecuteRemoteQuery("DELETE FROM detail_health_building_facilities WHERE health_building_id = '"&idBuilding&"' and facility_id = "&a.GetView(3).Text&"","DeleteFacility")
+			End Select
+	End Select
 End Sub
 
 Sub btnDelete_Click

@@ -117,9 +117,11 @@ Sub SetPressed(cmd As Button, Pressed As Boolean)
 End Sub
 
 Sub BtnSearch_Click
+	Activity.Finish
 	StartActivity(SearchBuilding)
 End Sub
 
 Sub BtnMap_Click
+	Activity.Finish
 	StartActivity(ManualPosition)
 End Sub
